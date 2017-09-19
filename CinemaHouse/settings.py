@@ -137,6 +137,17 @@ AUTH_USER_MODEL ='general.CinemaUser'
 
 GEOIP_PATH = 'Geo2'
 
+MAP_WIDGETS = {
+    "GooglePointFieldWidget": (
+        ("zoom", 15),
+        ("mapCenterLocationName", "kharkiv"),
+        ("GooglePlaceAutocompleteOptions", {'componentRestrictions': {'country': 'ua'}}),
+        ("markerFitZoom", 12),
+    ),
+    "GOOGLE_MAP_API_KEY": "AIzaSyAWfY6rV9iqCZcL2gxPpsUddpYIHkQbxbk"
+}
+
+
 CITIES_LIGHT_TRANSLATION_LANGUAGES = ['ru', 'en','ua','bl','pl']
 CITIES_LIGHT_INCLUDE_COUNTRIES = ['UA','RU','BY','PL']
 CITIES_LIGHT_INCLUDE_CITY_TYPES = ['PPL', 'PPLA', 'PPLA2', 'PPLA3', 'PPLA4', 'PPLC', 'PPLF', 'PPLG', 'PPLL', 'PPLR', 'PPLS', 'STLMT',]
