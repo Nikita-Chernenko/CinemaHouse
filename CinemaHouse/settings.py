@@ -37,7 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'general'
+    'django.contrib.gis',
+    'mapwidgets',
+    'cities_light',
+    'general',
+    'cinema_place',
+    'reservation',
 ]
 
 MIDDLEWARE = [
@@ -77,10 +82,13 @@ WSGI_APPLICATION = 'CinemaHouse.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+        'ENGINE':'django.contrib.gis.db.backends.mysql',
+        'NAME': 'cinema_db',
+        'USER': 'cinema',
+        'PASSWORD': 'qwert1234',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }}
 
 
 # Password validation
@@ -120,4 +128,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/map_static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 AUTH_USER_MODEL ='general.CinemaUser'
+
+GEOIP_PATH = 'Geo2'
+
+CITIES_LIGHT_TRANSLATION_LANGUAGES = ['ru', 'en','ua','bl','pl']
+CITIES_LIGHT_INCLUDE_COUNTRIES = ['UA','RU','BY','PL']
+CITIES_LIGHT_INCLUDE_CITY_TYPES = ['PPL', 'PPLA', 'PPLA2', 'PPLA3', 'PPLA4', 'PPLC', 'PPLF', 'PPLG', 'PPLL', 'PPLR', 'PPLS', 'STLMT',]
