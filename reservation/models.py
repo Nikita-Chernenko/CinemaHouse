@@ -7,16 +7,16 @@ class CinemaHall(models.Model):
     name = models.CharField(max_length=1)
     cinema = models.ForeignKey(Cinema, on_delete=models.CASCADE)
 
+class SeatTypes(models.Model):
+    type = models.CharField(max_length=20)
 
 class Seat(models.Model):
-    SEAT_CHOICES = (
-        ("N", "Normal"),
-        ("L", "Luxary"),
-    )
     cinema_hall = models.ForeignKey(CinemaHall, on_delete=models.CASCADE)
     row = models.SmallIntegerField()
     seat = models.SmallIntegerField()
-    type = models.CharField(max_length=1,choices=SEAT_CHOICES)
+    type = models.ForeignKey(SeatTypes)
+
+
 
 
 class Session(models.Model):
