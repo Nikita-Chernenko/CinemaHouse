@@ -1,0 +1,14 @@
+{% extends "general/general.html" %}
+
+
+{% block title %}Account activation complete{% endblock %}
+
+{% block content %}
+    <div class="mrow">
+        <div class="center">
+             <p>Congratulations, your account has been activated.</p>
+
+             <p><a class="btn btn-success" href="{% url 'login' %}">Login</a></p>
+        </div>
+    </div>
+{% endblock %}

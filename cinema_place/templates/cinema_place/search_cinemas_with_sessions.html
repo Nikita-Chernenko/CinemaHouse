@@ -1,0 +1,90 @@
+{% extends 'general/general.html' %}
+
+{% block content %}
+
+    <div class="search" style="display: flex; justify-content: center; flex-direction: row; align-items: center">
+        <div style="display: flex; flex-direction: row; justify-content: center; align-items: center"
+             onsubmit="get_cinemas_with_sessions()">
+            <div class="form-group" style="display:inline-flex; align-items: center">
+                <label for="country_picker"> Страна</label>
+                <select name="country" id="country_picker" class="form-control" onselect="country_change()">
+                    {% for id, name in countries %}
+                        <option {% if name == country %} selected {% endif %} value="{{ id }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group" style="display:inline-flex;align-items: center">
+                <label for="city_picker">Город</label>
+                <select name="city" id="city_picker" class="form-control">
+                    {% for id, name in cities %}
+                        <option {% if name == city %} selected {% endif %} value="{{ id }}">{{ name }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+            <div class="form-group" style="display:inline-flex;align-items: center">
+                <label for="date_picker">Дата</label>
+                <input type="date" id="date_picker" class="form-control" value="{{ date }}">
+            </div>
+            <button class="form-group btn-success" onclick="get_cinemas_with_sessions()"
+                    style="display: inline-flex; align-items: center; justify-content: center">
+                Поиск
+            </button>
+        </div>
+    </div>
+    <div id="cinemas_with_sessions">
+        {% include 'cinema_place/cinemas_with_sessions.html' %}
+    </div>
+    <script>
+        function country_change() {
+            var country_id = $('#country_picker').val();
+            city_picker = $('#city_picker');
+            if (!country_id) {
+                city_picker.empty();
+                city_picker.setAttribute('disabled', 'disabled')
+            }
+            else {
+                $.ajax({
+                    type: 'GET',
+                    cache: false,
+                    url: '{% url 'get-city-by-country-id' %}',
+                    data: {country_id: country_id},
+                    success: function (data) {
+                        city_picker = $('#city_picker');
+                        city_picker.empty();
+                        city_picker.removeAttr('disabled');
+                        data['cities'].forEach(function (arr) {
+                            city_picker.append('<option value=' + arr[0] +
+                                '>' + arr[1] + '</option>)')
+                        })
+
+                    },
+                    error: function (error) {
+                        alert("Произошло ошибка:" + error)
+                    }
+                })
+            }
+
+        }
+
+        function get_cinemas_with_sessions() {
+            city = $('#city_picker').val();
+            date = $('#date_picker').val();
+            $.ajax({
+                type: "GET",
+                cache: false,
+                data: {date:date, city:city},
+                url: '{% url 'get-cinemas-with-sessions-by-film' film_slug=film_slug%}',
+                error: function (error) {
+                    alert("Произошло ошибка:" + error)
+                },
+                success: function (data) {
+                    $("#cinemas_with_sessions").html(data)
+                }
+
+            });
+
+        }
+        window.onload(get_cinemas_with_sessions())
+    </script>
+{% endblock %}

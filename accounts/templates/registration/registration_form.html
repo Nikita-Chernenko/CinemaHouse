@@ -1,0 +1,23 @@
+{% extends "general/general.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Registration{% endblock %}
+
+{% block content %}
+        <div class="row center-block text-center">
+            <div class="span12 ">
+                <form method="post" action="{% url 'registration_register' %}" class="form-horizontal">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        {% include 'registration/form_field.html' %}
+                    {% endfor %}
+                    <div class="control-group">
+                        <div class="controls">
+
+                            <button type="submit" class="btn ">Sign in</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+{% endblock %}

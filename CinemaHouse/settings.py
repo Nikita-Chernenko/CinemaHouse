@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -27,7 +26,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,9 +36,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
+    'django.contrib.sites',
+    'django_comments_xtd',
+    'django_comments',
     'mapwidgets',
+    'widget_tweaks',
+    'crispy_forms',
     'cities_light',
     'general',
+    'accounts',
     'cinema_place',
     'reservation',
 ]
@@ -76,20 +80,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'CinemaHouse.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE':'django.contrib.gis.db.backends.mysql',
+        'ENGINE': 'django.contrib.gis.db.backends.mysql',
         'NAME': 'cinema_db',
-        'USER': 'cinema',
-        'PASSWORD': 'qwert1234',
-        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '/opt/lampp/var/mysql/mysql.sock',
         'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -109,7 +114,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -123,31 +127,65 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/map_static/'
 
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-AUTH_USER_MODEL ='general.CinemaUser'
+AUTH_USER_MODEL = 'general.CinemaUser'
 
+#Coordinates etc
 GEOIP_PATH = 'Geo2'
 
+#Showing map in admin
 MAP_WIDGETS = {
     "GooglePointFieldWidget": (
         ("zoom", 15),
-        ("mapCenterLocationName", "kharkiv"),
-        ("GooglePlaceAutocompleteOptions", {'componentRestrictions': {'country': 'ua'}}),
+        ("mapCenterLocationName", "Urkaine"),
+        ("GooglePlaceAutocompleteOpti1ons", {'componentRestrictions': {'country': 'ua'}}),
         ("markerFitZoom", 12),
+        ("mapCenterLocation", [57.7177013, 10.6300491])
     ),
     "GOOGLE_MAP_API_KEY": "AIzaSyAWfY6rV9iqCZcL2gxPpsUddpYIHkQbxbk"
 }
 
+#Cities adn Countries in admin
+CITIES_LIGHT_TRANSLATION_LANGUAGES = ['ru', 'en', 'ua', 'bl', 'pl']
+CITIES_LIGHT_INCLUDE_COUNTRIES = ['UA', 'RU', 'BY', 'PL']
+CITIES_LIGHT_INCLUDE_CITY_TYPES = ['PPL', 'PPLA', 'PPLA2', 'PPLA3', 'PPLA4', 'PPLC', 'PPLF', 'PPLG', 'PPLL', 'PPLR',
+                                   'PPLS', 'STLMT', ]
 
-CITIES_LIGHT_TRANSLATION_LANGUAGES = ['ru', 'en','ua','bl','pl']
-CITIES_LIGHT_INCLUDE_COUNTRIES = ['UA','RU','BY','PL']
-CITIES_LIGHT_INCLUDE_CITY_TYPES = ['PPL', 'PPLA', 'PPLA2', 'PPLA3', 'PPLA4', 'PPLC', 'PPLF', 'PPLG', 'PPLL', 'PPLR', 'PPLS', 'STLMT',]
+#email activation term
+ACCOUNT_ACTIVATION_DAYS = 7
+
+
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'marakaci1996@gmail.com'
+EMAIL_HOST_PASSWORD = 'Nikita12'
+
+
+
+#comments
+SITE_ID = 1
+
+COMMENTS_APP = 'django_comments_xtd'
+
+COMMENTS_XTD_FROM_EMAIL = "marakaci1996@gmail.com"
+
+# Contact mail address to show in messages.
+COMMENTS_XTD_CONTACT_EMAIL = "marakaci1996@gmail.com"
+
+COMMENTS_XTD_MAX_THREAD_LEVEL = 1  # default is 0
+COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')  # default is ('thread_id', 'order')
+
+COMMENTS_XTD_SALT = (b"Timendi causa est nescire. "
+                     b"Aequam memento rebus in arduis servare mentem.")

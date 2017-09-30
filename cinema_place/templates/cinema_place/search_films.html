@@ -1,0 +1,90 @@
+{% extends 'general/general.html' %}
+
+{% block content %}
+    <div class="search col-xs-12 col-md-12" style="margin-bottom: 1%">
+        {% csrf_token %}
+        <div class="row">
+            <div class="form-group search_block col-xs-12 col-md-3">
+                <label for="genres_picker">Жанр фильма</label>
+                <select multiple name="genres" id="genres_picker" class="form-control">
+                    {% for id, name in genres %}
+                        <option value="{{ id }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group search_block col-xs-12 col-md-3">
+                <label for="name_picker">Название фильма</label>
+                <input type="text" name="name" id="name_picker" class="form-control" placeholder="Название фильма">
+
+            </div>
+            <div class="form-group search_block col-xs-12 col-md-3">
+                <label for="age_from_picker"> Возрастное ограничение от </label>
+                <select name="age_from" id="age_from_picker" class="form-control">
+                    <option value="3" selected>3+</option>
+                    <option value="6">6+</option>
+                    <option value="12">12+</option>
+                    <option value="16">16+</option>
+                    <option value="18">18+</option>
+                    <option value="21">21+</option>
+                </select>
+            </div>
+            <div class="form-group search_block col-xs-12 col-md-3">
+                <label for="age_to_picker"> Возрастное ограничение</label>
+                <select name="age_to" id="age_to_picker" class="form-control">
+                    <option value="3">3+</option>
+                    <option value="6">6+</option>
+                    <option value="12">12+</option>
+                    <option value="16">16+</option>
+                    <option value="18">18+</option>
+                    <option value="21" selected>21+</option>
+                </select>
+            </div>
+        </div>
+        <button class="form-group col-xs-6 col-md-3 btn-success btn center center-block" style="float:none"
+                onclick="get_films()">
+            Поиск
+        </button>
+    </div>
+    <div id="films" class="col-xs-12">
+    </div>
+
+    {#    <style>#}
+    {#    .search_block{#}
+    {#        display:inline-flex; align-items: center; margin: 10px 10px 10px 10px#}
+    {#    }#}
+    {#    </style>#}
+    <script>
+        function get_films() {
+            name = $('#name_picker').val();
+            genres = $('#genres_picker').val();
+            age_from = $('#age_from_picker').val();
+            age_to =$('#age_to_picker').val();
+            var csrftoken = getCookie('csrftoken');
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                type: "POST",
+                cache: false,
+                data: {name: name, genres: genres, age_from: age_from, age_to:age_to},
+                url: '{% url "films" %}',
+                error: function (error) {
+                    {#                    alert("Произошло ошибка:" + error)#}
+                },
+                success: function (data) {
+                    $("#films").html(data)
+                }
+
+            });
+
+        }
+
+        window.onload = get_films;
+
+
+    </script>
+{% endblock %}

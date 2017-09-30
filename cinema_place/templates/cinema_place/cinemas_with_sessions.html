@@ -1,0 +1,18 @@
+{% for cinema_with_sessions in cinemas_with_sessions %}
+    {% for cinema, sessions in cinema_with_sessions.items %}
+        <div class="col-xs-4 col-md-2 text-center" style="background-color: whitesmoke">
+            <p style="color: darkblue; font-size:20px">{{ cinema.brand }} {{ cinema.area.city.name }}</p>
+            <p>{{ cinema.brand.image_tag }}</p>
+            <div class="list-group-item-info ">
+                <ul class="list-unstyled">
+                    {% for session in sessions %}
+                        <a href='{% url 'get-reservation-by-session-id' session_id=session.id %}'>
+                            <li>{{ session.datetime.time|time:"H:i" }}</li>
+                        </a>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+    {% endfor %}
+{% endfor %}
