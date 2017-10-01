@@ -3,34 +3,38 @@
 
     {% load comments %}
     {% load comments_xtd %}
-    <div class="col-md-3 col-xs-12" id="film_image" align="center">
-        <img class="img-responsive" src="{{ film.horizontal_image_url }}">
+    <div id="main_div" style="display: flex">
+        <div class="col-md-3 col-xs-12" id="film_image" align="center">
+            <img class="img-responsive" src="{{ film.horizontal_image_url }}">
+        </div>
+        <div class="col-md-5 col-xs-12" id="description" style="text-align: left; border: 2px solid black">
+            <h1>{{ film.name }}</h1>
+            <div style="clear: both;">
+                <p style="float: left"> Возраст:</p>
+                <p style="float: left"> {{ film.age }}+</p></div>
+            <div style="clear: both;">
+                <p style="float: left"> Режиссер: </p>
+                <p style="float: left"> {% for director  in film.directors.all %}{{ director }}, {% endfor %}</p></div>
+            <div>
+                <p style="float: left"> Жанр: </p>
+                <p style="float: left">{% for genre  in film.genres.all %}{{ genre }}, {% endfor %}</p></div>
+            <div style="clear: both;">
+                <p style="float: left"> В главных ролях: </p>
+                <p style="float: left">{% for actor  in film.cast.all %}{{ actor }}, {% endfor %}</p></div>
+            <div style="clear: both;">
+                <p style="float: left"> Описание: </p>
+                <p style="float: left">{{ film.description }}+</p></div>
+            <p align="center"><a href="{% url 'search-cinemas-with-sessions' film_slug=film.slug %}"
+                                 class="btn btn-primary"
+                                 role="button">Сеансы</a></p>
+        </div>
+        <div class="col-md-4 col-xs-12 video-container" id="film_video">
+            <iframe src="https://www.youtube.com/embed/L4gJRP8nVLY"
+                    height="100%" width="100%"
+                    allowfullscreen="" frameborder="0"></iframe>
+        </div>
     </div>
-    <div class="col-md-5 col-xs-12" id="description" style="text-align: left; border: 2px solid black;">
-        <h1>{{ film.name }}</h1>
-        <div style="clear: both;">
-            <p style="float: left"> Возраст:</p>
-            <p style="float: left"> {{ film.age }}+</p></div>
-        <div style="clear: both;">
-            <p style="float: left"> Режиссер: </p>
-            <p style="float: left"> {% for director  in film.directors.all %}{{ director }}, {% endfor %}</p></div>
-        <div>
-            <p style="float: left"> Жанр: </p>
-            <p style="float: left">{% for genre  in film.genres.all %}{{ genre }}, {% endfor %}</p></div>
-        <div style="clear: both;">
-            <p style="float: left"> В главных ролях: </p>
-            <p style="float: left">{% for actor  in film.cast.all %}{{ actor }}, {% endfor %}</p></div>
-        <div style="clear: both;">
-            <p style="float: left"> Описание: </p>
-            <p style="float: left">{{ film.description }}+</p></div>
-        <p align="center"><a href="{% url 'search-cinemas-with-sessions' film_slug=film.slug %}" class="btn btn-primary"
-                             role="button">Сеансы</a>
-    </div>
-    <div class="col-md-4 col-xs-12 video-container" id="film_video">
-        <iframe src="https://www.youtube.com/embed/L4gJRP8nVLY" height="{{ film.vertical_image.height }}px" width="100%"
-                allowfullscreen="" frameborder="0"></iframe>
-    </div>
-    <div class="col-md-8 col-xs-12" style="margin-left: 15%; margin-top:  color: black !important;">
+    <div class="col-md-8 col-xs-12" style="margin-left: 15%; color:black !important;">
         {% get_comment_count for film as comment_count %}
 
 
@@ -50,9 +54,19 @@
         {% endif %}
     </div>
     <style>
-    body > div > div.col-md-8.col-xs-12 > ul > li:nth-child(1) > div.media-body > div.comment > a{
-        color: darkblue !important;
-    }
+        body > div > div.col-md-8.col-xs-12 > ul > li:nth-child(1) > div.media-body > div.comment > a {
+            color: darkblue !important;
+        }
 
     </style>
+    <script>
+        $(window).resize(function () {
+            if ($(window).width() < 768) {
+                $('#main_div').css('flex-direction','column')
+            }
+            if ($(window).width() > 768) {
+                $('#main_div').css('flex-direction','row')
+            }
+        })
+    </script>
 {% endblock %}

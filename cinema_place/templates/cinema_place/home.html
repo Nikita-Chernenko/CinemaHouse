@@ -2,78 +2,9 @@
 <html>
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
-    <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-    <script>
-        var map, marker, waypointByID = {};
-        var currentObject;
-        var map;
-        var geocoder;
-        {% for waypoint in waypoints %}
-            waypointByID["{{waypoint.name}}"] = {
-                name: "{{waypoint.name}}",
-                lat: {{waypoint.geom.y}},
-                lng: {{waypoint.geom.x}}
-            };
-        {% endfor %}
-        function initialize() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 5,
-                center: new google.maps.LatLng(41.879535, -87.624333),
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            });
-            geocoder = new google.maps.Geocoder()
-            var waypoint = waypointByID["test"];
-            draw(waypoint)
-            var waypoint = waypointByID["test2"];
-            draw(waypoint)
-            var waypoint = waypointByID["test3"];
-            draw(waypoint)
-            function draw(waypoint) {
-                var center = new google.maps.LatLng(waypoint.lat, waypoint.lng);
-            currentObject = $(this);
-            if (marker) marker.setMap();
-            marker = new google.maps.Marker({map: map, position: center, draggable: true});
-            google.maps.event.addListener(marker, 'dragend', function () {
-                var position = marker.getPosition();
-                waypoint.lat = position.lat();
-                waypoint.lng = position.lng();
-                currentObject.html(waypoint.name +
-                    ' (' + waypoint.lat +
-                    ', ' + waypoint.lng + ')');
-                $('#saveWaypoints').removeAttr('disabled');
-            });
-            map.panTo(center);
-            }
 
-            }
-    </script>
-    <style>
-        body {
-            font-family: sans-serif
-        }
-
-        #map {
-            width: 500px;
-            height: 300px
-        }
-
-        #waypoints {
-            overflow: auto;
-            width: 500px;
-            height: 100px
-        }
-
-        .linkOFF {
-            color: darkblue
-        }
-
-        .linkON {
-            color: white;
-            background-color: darkblue
-        }
-    </style>
 </head>
 
 <body onload='initialize()'>

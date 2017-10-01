@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from cinema_place.models import FilmCinema, Cinema
 
@@ -16,6 +18,9 @@ class Seat(models.Model):
     seat = models.SmallIntegerField()
     type = models.ForeignKey(SeatTypes)
 
+    def __str__(self):
+        return f'Ряд {self.row} место {self.seat}'
+
 
 
 
@@ -30,19 +35,37 @@ class ReservationSeat(models.Model):
     seat = models.ForeignKey(Seat, on_delete=models.CASCADE)
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.seat}'
+
 
 class Ticket(models.Model):
-    tree_dimensional = models.BooleanField()
+    three_dimensional = models.BooleanField()
     reservation_seat = models.OneToOneField(ReservationSeat,on_delete=models.CASCADE)
     price = models.SmallIntegerField()
+
+    def __str__(self):
+        return f'{self.reservation_seat} {self.price}'
 
 
 class Reservation(models.Model):
     name = models.CharField(max_length=20, null=True)
     surname = models.CharField(max_length=20, null=True)
     email = models.EmailField(null=True)
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
+    tickets = models.ManyToManyField(Ticket)
 
-    def save(self, *args, **kwargs):
-        self.ticket.reservation_seat.booked = True
-        return super(Reservation, self).save(self, *args, **kwargs)
+    @property
+    def summary(self):
+        return self.tickets.all().aggregate(sum('price'))
+
+    def __str__(self):
+        return f'{self.name} {self.surname} {self.tickets.all()}'
+
+@receiver(post_save,sender=Reservation)
+def reservation_post_save(sender, instance, created, **kwargs):
+    if instance.tickets:
+        for ticket in instance.tickets.all():
+            ticket.reservation_seat.booked=True
+            ticket.reservation_seat.save()
+            ticket.save()
+

@@ -36,14 +36,20 @@ class Cinema(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     area = models.ForeignKey(Area, on_delete=models.CASCADE)
     geom = gismodels.PointField(default='POINT(49.988358 36.232845)')
+    slug = models.SlugField()
+    allow_comments = models.BooleanField(default=True)
     objects = gismodels.GeoManager()
 
-    @property
-    def slug(self):
-        return slugify(f'{self.brand} {self.id}')
 
     def __str__(self):
         return f"Company name: {self.brand}  {self.area}  x:{self.geom.x} y:{self.geom.y}"
+
+    def get_absolute_url(self):
+        return  reverse('cinema-detail',kwargs={'cinema_slug':self.slug})
+
+@receiver(post_save,sender=Cinema)
+def cinema_post_save(sender, instance, created, **kwargs):
+    Cinema.objects.filter(pk=instance.id).update(slug = slugify(f'{instance.brand} {instance.id}'))
 
 
 class Genre(models.Model):

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from cities_light.models import City, Country
 from django.contrib.gis.geoip2 import GeoIP2
@@ -42,14 +42,17 @@ def get_pic(request, url):
     image = open(url, 'rb').read()
     return HttpResponse(image, content_type='image/jpg')
 
+
 def get_city_by_country_id(request):
     if request.method == "GET":
         try:
             country_id = request.GET['country_id']
         except:
             return Http404()
-        cities = list(City.objects.filter(country_id=country_id).values_list('id','name'))
+        cities = list(City.objects.filter(country_id=country_id).values_list('id', 'name'))
         return JsonResponse({'cities': cities})
+
+
 def main(request):
     geo = GeoIP2()
     client_ip = get_client_ip(request)
@@ -68,18 +71,22 @@ def get_cinemas_with_sessions_by_film(request, film_slug):
     cinemas_with_sessions = []
     for cinema in cinemas:
         sessions = Session.objects.filter(film_cinema__cinema=cinema)
-        sessions = sessions.filter(datetime__contains = date)
+        sessions = sessions.filter(datetime__contains=date)
         cinemas_with_sessions.append({cinema: sessions})
-    countries = Country.objects.all().values_list('id','name')
+    countries = Country.objects.all().values_list('id', 'name')
     return render(request, 'cinema_place/cinemas_with_sessions.html', {'cinemas_with_sessions': cinemas_with_sessions})
+
 
 def search_cinemas_with_sessions(request, film_slug):
     city = _get_request_city(request)
     date = str(Session.objects.last().datetime.date())
-    countries = Country.objects.all().values_list('id','name')
-    cities = City.objects.filter(country= city.country).values_list('id','name')
-    return render(request, 'cinema_place/search_cinemas_with_sessions.html', {'countries':countries, 'cities': cities, 'country':city.country.name,
-                                                               'city': city.name, 'film_slug':film_slug, 'date':date})
+    countries = Country.objects.all().values_list('id', 'name')
+    cities = City.objects.filter(country=city.country).values_list('id', 'name')
+    return render(request, 'cinema_place/search_cinemas_with_sessions.html',
+                  {'countries': countries, 'cities': cities, 'country': city.country.name,
+                   'city': city.name, 'film_slug': film_slug, 'date': date})
+
+
 def _get_request_city(request):
     g = GeoIP2()
     lon, lat = g.lon_lat(get_client_ip(request))
@@ -93,7 +100,7 @@ def films(request):
         name = request.POST['name'].capitalize()
         age_from = request.POST['age_from']
         age_to = request.POST['age_to']
-        genres =  request.POST.getlist('genres[]')
+        genres = request.POST.getlist('genres[]')
         films = Film.objects.all()
         if name:
             films = films.filter(name__contains=name)
@@ -103,10 +110,47 @@ def films(request):
             films = films.filter(age__lte=age_to)
         if genres:
             films = films.filter(genres__in=genres)
-        return render_to_response('cinema_place/film_thumbnail.html',{'films':films})
+        return render_to_response('cinema_place/film_thumbnail.html', {'films': films})
     else:
-        genres = Genre.objects.all().values_list('id','name')
-        return render(request,'cinema_place/search_films.html',{'genres':genres},)
+        genres = Genre.objects.all().values_list('id', 'name')
+        return render(request, 'cinema_place/films.html', {'genres': genres}, )
+
+
 def film_detail(request, film_slug):
     film = Film.objects.get(slug=film_slug)
-    return render(request,'cinema_place/film_detail.html',{'film': film})
+    return render(request, 'cinema_place/film_detail.html', {'film': film})
+
+
+def cinemas(request):
+    if request.method == 'POST':
+        city_id = request.POST['city_id']
+        cinemas = Cinema.objects.filter(area__city_id=city_id)
+        cinemas_with_films = {
+        cinema: [filmcinema.film.name for filmcinema in FilmCinema.objects.filter(cinema=cinema) if
+                 filmcinema.end_screening > datetime.now().date()][:5]
+        for cinema in cinemas}
+
+        return render(request, 'cinema_place/cinemas_with_films.html', {'cinemas_with_films': cinemas_with_films})
+    city = _get_request_city(request)
+    countries = Country.objects.all().values_list('id', 'name')
+    cities = City.objects.filter(country=city.country).values_list('id', 'name')
+    return render(request, 'cinema_place/cinemas.html',
+                  {'countries': countries, 'cities': cities, 'country': city.country.name,
+                   'city': city.name})
+
+
+def cinema_detail(request, cinema_slug):
+    cinema = Cinema.objects.get(slug=cinema_slug)
+    if request.method == "POST":
+        date = request.POST['date']
+        films_in_cinema = FilmCinema.objects.filter(cinema=cinema).filter(session__datetime__contains=date)
+
+        films_with_sessions = {film_cinema.film: film_cinema.session_set.all() for film_cinema in films_in_cinema}
+
+        return render(request, 'cinema_place/films_with_sessions.html', {'films_with_sessions': films_with_sessions})
+    filmnames = [film.name for film in
+                 Film.objects.filter(filmcinema__cinema=cinema, filmcinema__end_screening__gte=datetime.now().date())]
+    date_start = datetime.now().date().strftime("%Y-%m-%d")
+    date_end = (datetime.now().date() + timedelta(days=14)).strftime("%Y-%m-%d")
+    return render(request, 'cinema_place/cinema_detail.html',
+                  {'cinema': cinema, 'filmnames': filmnames, 'date_start': date_start, 'date_end': date_end})

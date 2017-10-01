@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" style="height:100% ;width:100%;">
+<head>
+
+    <meta charset="UTF-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'general/bootstrap/css/bootstrap.min.css' %}" }>
+    <link rel="stylesheet" href="{% static 'general/css/bootstrap-datepaginator.css' %}" }>
+    <script src="{% static 'general/jquery.js' %}"></script>
+    <script src="{% static 'general/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'general/js/csrf.js' %}"></script>
+    <script src="{% static 'general/js/bootstrap-datepicker.js' %}"></script>
+    <script src="{% static 'general/js/momentjs.js' %}"></script>
+    <script src="{% static 'general/js/bootstrap-datepaginator.js' %}"></script>
+    <nav class="navbar navbar-default" role="navigation"
+         style="margin-bottom: 1%; background-color: black; color: red ">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#desktop">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+            </div>
+            <div class="collapse navbar-collapse" id="desktop">
+                <h4>
+                    <ul class="nav navbar-nav " style="width: 100%; color: red !important;">
+                        <li style=""><a href="{% url 'main' %}">CinemaHouse</a></li>
+                        <li style=""><a href="{% url 'films' %}">Фильмы</a></li>
+                        <li style=""><a href="{% url 'cinemas' %}">Кинотеатры</a></li>
+                        {% if user.is_authenticated %}
+                            <li style="float: right"><a href={% url 'logout' %}>Выход {{ user.username }}</a></li>
+                        {% else %}
+                            <li style="float: right"><a href={% url 'login' %}>Вход</a></li>
+                            <li style="float: right"><a href="{% url 'registration_register' %}">Регестрация</a></li>
+                        {% endif %}
+
+                        {% block menu %}
+
+                        {% endblock %}
+                    </ul>
+                </h4>
+            </div>
+
+        </div>
+    </nav>
+</head>
+<style>
+    #date_paginator > ul > li > a {
+        color: black !important;
+    }
+
+    #date_paginator > ul > li > a:hover {
+        color: blue !important;
+    }
+
+    .dp-no-select {
+        background-color: darkgray !important;
+    }
+
+    .dp-no-select:hover {
+        background-color: darkgray !important;
+        color: black !important;
+    }
+
+    ul li a {
+        color: white !important;
+    }
+
+    ul li a:hover {
+        color: cadetblue !important;
+    }
+
+    div .border {
+        border: 2px solid black;
+    }
+</style>
+<body style="background-color: whitesmoke;height: 100%;width: 100%">
+<div class="container"
+     style="height:100%; width: 100%">
+    {% block content %}
+    {% endblock %}
+    <div class="navbar-fixed-bottom container-fluid">ff</div>
+</div>
+
+</body>
+</html>

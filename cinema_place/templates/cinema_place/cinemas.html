@@ -1,0 +1,96 @@
+{% extends 'general/general.html' %}
+{% block content %}
+    <div class="search col-xs-12 col-md-12" style="margin-bottom: 1%">
+        {% csrf_token %}
+        <div class="row">
+            <div class="form-group col-xs-12 col-md-4">
+                <label for="country_picker"> Страна</label>
+                <select name="country" id="country_picker" class="form-control" onselect="country_change()">
+                    {% for id, name in countries %}
+                        <option {% if name == country %} selected {% endif %} value="{{ id }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-xs-12 col-md-4">
+                <div class="form-group">
+                    <label for="city_picker">Город</label>
+                    <select name="city" id="city_picker" class="form-control">
+                        {% for id, name in cities %}
+                            <option {% if name == city %} selected {% endif %} value="{{ id }}">{{ name }}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-xs-12 col-md-2">
+                <label for="cinema_button">Найти</label>
+                <button id='cinema_button' class="form-control btn-success btn"
+                        onclick="get_cinemas()">
+                    Поиск
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="cinemas" class="col-xs-12">
+    </div>
+    <script>
+        function country_change() {
+            var country_id = $('#country_picker').val();
+            city_picker = $('#city_picker');
+            if (!country_id) {
+                city_picker.empty();
+                city_picker.setAttribute('disabled', 'disabled')
+            }
+            else {
+                $.ajax({
+                    type: 'GET',
+                    cache: false,
+                    url: '{% url 'get-city-by-country-id' %}',
+                    data: {country_id: country_id},
+                    success: function (data) {
+                        city_picker = $('#city_picker');
+                        city_picker.empty();
+                        city_picker.removeAttr('disabled');
+                        data['cities'].forEach(function (arr) {
+                            city_picker.append('<option value=' + arr[0] +
+                                '>' + arr[1] + '</option>)')
+                        })
+
+                    },
+                    error: function (error) {
+                        alert("Произошло ошибка:" + error)
+                    }
+                })
+            }
+
+        }
+
+        function get_cinemas() {
+            city_id = $('#city_picker').val();
+            var csrftoken = getCookie('csrftoken');
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                type: "POST",
+                cache: false,
+                data: {city_id: city_id},
+                url: '{% url "cinemas" %}',
+                error: function (error) {
+                    {#                    alert("Произошло ошибка:" + error)#}
+                },
+                success: function (data) {
+                    $("#cinemas").html(data)
+                }
+
+            });
+
+        }
+
+        window.onload = get_cinemas;
+    </script>
+{% endblock %}
