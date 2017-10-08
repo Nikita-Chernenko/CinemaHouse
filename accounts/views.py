@@ -5,4 +5,4 @@ from django.shortcuts import render, redirect
 
 def my_logout(request):
     logout(request)
-    return redirect('main')
+    return redirect(request.META.get("HTTP_REFERER"))

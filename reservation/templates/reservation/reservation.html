@@ -1,0 +1,38 @@
+{% extends 'general/general.html' %}
+
+{% block content %}
+    <div class="center-block text-center col-xs-12">
+        <h3>{{ name }} {{ datetime }}</h3>
+        <p> Вы подтверждаете бронь следующих билетов:</p>
+        {% for reservation_seat in reservation_seats %}
+            <p class="alert-info" style="width: 40%;margin-left: 30%;">Ряд {{ reservation_seat.seat.row }}
+                Место {{ reservation_seat.seat.seat }} Тип {{ reservation_seat.seat.type.type }}
+                Зал {{ reservation_seat.session.hall.name }}</p>
+        {% endfor %}
+        <p>Общая цена {{ price }}</p>
+        <form class="form-horizontal" role="form"
+              action="{% url 'continue-reservation' reservation_seat_ids=seat_ids session_id=session_id %}"
+              method="post">
+            {% csrf_token %}
+            <div class="col-xs-12">
+                {% for field in form%}
+                    <div style="display: flex;justify-content: center;align-items: center">{% include 'registration/form_field.html' %}</div>
+                {% endfor %}
+            </div>
+            {#            {% for field in form %}#}
+            {##}
+            {#                <div class="form-group">{{ field.errors }}#}
+            {#                    {{ field.label_tag }} {{ field }}#}
+            {#                    {% if field.help_text %}#}
+            {#                        <p class="help">{{ field.help_text|safe }}</p>#}
+            {#                    {% endif %}</div>#}
+            {#            {% endfor %}#}
+            <input type="submit" class="btn-success btn" style="margin-top: 1%" value="Подтвердить бронирование">
+        </form>
+        <a class="btn btn-default" style="float: left"
+           href=" {% url 'get-reservation-by-session-id' session_id=session_id %}"> Назад</a>
+        <p class="alert-info" style="margin:1%30%5%30%">После подтверждения информация придет к вам на почту</p>
+
+    </div>
+
+{% endblock %}

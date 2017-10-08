@@ -22,5 +22,6 @@ urlpatterns = [
     url(r'^accounts/',include('accounts.urls')),
     url(r'^reservation/',include('reservation.urls')),
     url(r'^comments/',include('django_comments_xtd.urls')),
+    url(r'rate/',include('rate.urls'))
 ]
 

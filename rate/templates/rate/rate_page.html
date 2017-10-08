@@ -1,0 +1,64 @@
+{% extends 'general/general.html' %}
+
+{% block content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'cinema_place/css/rating.min.css' %}">
+
+    {% for film in films %}
+        <div id="{{ film.id }}" class="thumbnail col-md-4 col-xs-6">
+            <img class="img-thumbnail" src="{{ film.horizontal_image_url }}">
+            <div class="caption">{{ film.name }}</div>
+            <div class="rating col-xs-12"
+                 style="display: flex; flex-direction: row; justify-content: center"></div>
+            <button class="center-block"  onclick="rate(this)">Оценить
+            </button>
+
+        </div>
+    {% endfor %}
+    <script src="{% static 'cinema_place/js/rating.min.js' %}"></script>
+    <script>
+        var els = $('.rating');
+        var currentRating = 0;
+        var maxRating = 10;
+        ratings = {};
+        for (k = 0; k < els.length; k++) {
+            id = $(els[k]).parent().attr('id');
+            ratings[id] = rating(els[k], currentRating, maxRating);
+        }
+
+
+        function remove(el) {
+            el = $(el);
+            el = el.parent();
+            el.remove()
+        }
+
+        function rate(el) {
+            id = $(el).parent().attr('id');
+            rating = ratings[id];
+            rating = rating.getRating();
+            var csrftoken = getCookie('csrftoken');
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                type: "POST",
+                data: {rate: rating, film_id: id},
+                url: '{% url "rate-film" %}',
+                error: function (error) {
+                    console.log('Произошла ошибка ' + error)
+                },
+                success: function (data) {
+                    $("#rate").html("Рейтинг фильма " + data);
+                    $('#button_rate').html('Переоценить');
+                }
+
+            });
+
+        }
+    </script>
+{% endblock %}

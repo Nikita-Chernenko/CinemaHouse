@@ -3,11 +3,27 @@
 
     {% load comments %}
     {% load comments_xtd %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'cinema_place/css/rating.min.css' %}">
+
+
     <div id="main_div" style="display: flex">
-        <div class="col-md-3 col-xs-12" id="film_image" align="center">
+        <div class="col-md-4 col-xs-12" id="film_image" align="center">
             <img class="img-responsive" src="{{ film.horizontal_image_url }}">
+            <h3><p id="rate"> Ретинг фильма {{ film.rate }}</p></h3>
+            {% csrf_token %}
+            {% if user.is_authenticated %}
+                <div id="rating" class="col-xs-12"
+                     style="display: flex; flex-direction: row; justify-content: center"></div>
+                <button class="center-block" id='button_rate' onclick="rate()">{% if rated_by_user %}
+                    Переоценить{% else %}
+                    Оценить{% endif %}</button>
+            {% else %}
+                <p align="center">Войдите в систему, чтобы оценить</p>
+            {% endif %}
+
         </div>
-        <div class="col-md-5 col-xs-12" id="description" style="text-align: left; border: 2px solid black">
+        <div class="col-md-4 col-xs-12" id="description" style="text-align: left; border: 2px solid black">
             <h1>{{ film.name }}</h1>
             <div style="clear: both;">
                 <p style="float: left"> Возраст:</p>
@@ -54,19 +70,51 @@
         {% endif %}
     </div>
     <style>
-        body > div > div.col-md-8.col-xs-12 > ul > li:nth-child(1) > div.media-body > div.comment > a {
+        body > div > div.col-md-8.col-xs-12 > ul > li > div.media-body > div.comment > a {
             color: darkblue !important;
         }
 
     </style>
+    <script src="{% static 'cinema_place/js/rating.min.js' %}"></script>
     <script>
+        var el = document.querySelector('#rating');
+        var currentRating = 0;
+        var maxRating = 10;
+        var myRating = rating(el, currentRating, maxRating);
+
+
         $(window).resize(function () {
             if ($(window).width() < 768) {
-                $('#main_div').css('flex-direction','column')
+                $('#main_div').css('flex-direction', 'column')
             }
             if ($(window).width() > 768) {
-                $('#main_div').css('flex-direction','row')
+                $('#main_div').css('flex-direction', 'row')
             }
-        })
+        });
+
+        function rate() {
+            rating = myRating.getRating();
+            var csrftoken = getCookie('csrftoken');
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                type: "POST",
+                data: {rate: rating, film_id: {{film.id}}},
+                url: '{% url "rate-film" %}',
+                error: function (error) {
+                    console.log('Произошла ошибка ' + error)
+                },
+                success: function (data) {
+                    $("#rate").html("Рейтинг фильма " + data);
+                    $('#button_rate').html('Переоценить');
+                }
+
+            });
+        }
     </script>
 {% endblock %}

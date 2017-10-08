@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'accounts',
     'cinema_place',
     'reservation',
+    'rate'
 ]
 
 MIDDLEWARE = [

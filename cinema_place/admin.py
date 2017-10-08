@@ -1,5 +1,5 @@
 from django.contrib import admin
-from cinema_place.models import Cinema, Area, Film, FilmCinema, Brand, Rate, Genre, Actror,Producer
+from cinema_place.models import Cinema, Area, Film, FilmCinema, Brand,  Genre, Actror,Producer
 from django.contrib.gis import admin as geoadmin
 from django.contrib.gis.db import models
 from mapwidgets.widgets import GooglePointFieldWidget
@@ -14,7 +14,7 @@ class CinemaMapAdmin(admin.ModelAdmin):
 class RateAdmin(admin.ModelAdmin):
     readonly_fields = ('rate','slug')
 
-@admin.register(Rate,Genre,Actror,Producer)
+@admin.register(Genre,Actror,Producer)
 class CinemaPlaceAdmin(admin.ModelAdmin):
     pass
 @admin.register(Brand)

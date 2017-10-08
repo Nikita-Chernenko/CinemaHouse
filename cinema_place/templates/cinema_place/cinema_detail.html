@@ -32,35 +32,35 @@
 
         </div>
     </div>
-    {#    <div id="search">#}
-    {#        <div class="row">#}
-    {#            <h2><p class="text-center">Сеансы</p></h2>#}
-    {#            <div class="col-xs-12 col-md-8 center-block" style="float: none" id="date_paginator" class="border"></div>#}
-    {#            <div class="row" id="films_sessions">#}
-    {#            </div>#}
-    {#        </div>#}
-    {#    </div>#}
-    {#    <div class="row">#}
-    {#        <div class="col-md-8 col-xs-12 center-block" style="float:none;color: black !important;">#}
-    {#            {% get_comment_count for cinema as comment_count %}#}
-    {##}
-    {##}
-    {#            {% if cinema.allow_comments %}#}
-    {#                <div class="comment">#}
-    {#                    <div class="well">#}
-    {#                        {% render_comment_form for cinema %}#}
-    {#                    </div>#}
-    {#                </div>#}
-    {#            {% endif %}#}
-    {##}
-    {#            {% if comment_count %}#}
-    {#                <hr/>#}
-    {#                <ul class="media-list">#}
-    {#                    {% render_xtdcomment_tree for cinema %}#}
-    {#                </ul>#}
-    {#            {% endif %}#}
-    {#        </div>#}
-    {#    </div>#}
+        <div id="search">
+            <div class="row">
+                <h2><p class="text-center">Сеансы</p></h2>
+                <div class="col-xs-12 col-md-8 center-block" style="float: none" id="date_paginator" class="border"></div>
+                <div class="row" id="films_sessions">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-xs-12 center-block" style="float:none;color: black !important;">
+                {% get_comment_count for cinema as comment_count %}
+
+
+                {% if cinema.allow_comments %}
+                    <div class="comment">
+                        <div class="well">
+                            {% render_comment_form for cinema %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if comment_count %}
+                    <hr/>
+                    <ul class="media-list">
+                        {% render_xtdcomment_tree for cinema %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
     <style>
         .col {
             flex: 1; /* additionally, equal width */

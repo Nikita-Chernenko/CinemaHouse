@@ -1,8 +1,8 @@
 {% for cinema_with_sessions in cinemas_with_sessions %}
     {% for cinema, sessions in cinema_with_sessions.items %}
-        <div class="col-xs-4 col-md-2 text-center" style="background-color: whitesmoke">
-            <p style="color: darkblue; font-size:20px">{{ cinema.brand }} {{ cinema.area.city.name }}</p>
-            <p>{{ cinema.brand.image_tag }}</p>
+        <div class="col-xs-4 col-md-2 text-center" style="">
+            <p style="color: darkblue; font-size:20px"><a href="{% url 'cinema-detail' cinema_slug=cinema.slug %}">{{ cinema.brand }} {{ cinema.area.city.name }}</a></p>
+            <img src="{{ cinema.brand.image_url }}"  class="img-responsive center-block" style="max-height:300px;float: none">
             <div class="list-group-item-info ">
                 <ul class="list-unstyled">
                     {% for session in sessions %}

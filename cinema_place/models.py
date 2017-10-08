@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.conf import settings
 
+from cinema_place.manages import FilmManager
 from general.models import CinemaUser
 
 
@@ -85,6 +86,9 @@ class Film(models.Model):
     big_image = models.ImageField(upload_to='film_images/big_images', unique=True)
     video_url = models.URLField()
     allow_comments = models.BooleanField('allow_comments',default=True)
+    active = models.BooleanField(default=True)
+
+    objects = FilmManager()
     @property
     def vertical_image_url(self):
         return f'/cinema/get_pic/{settings.MEDIA_ROOT}/{self.vertical_image}'
@@ -99,16 +103,17 @@ class Film(models.Model):
 
     @property
     def rate(self):
-        return (Rate.objects.filter(film=self).aggregate(Avg('value')))['value__avg']
+        from rate.models import Rate
+        return (Rate.objects.filter(film=self).aggregate(Avg('value')))['value__avg'] or 0
 
     def get_absolute_url(self):
-        return  reverse('film_detail',kwargs={'film_slug':self.slug})
+        return  reverse('film-detail',kwargs={'film_slug':self.slug})
 
     @property
     def short_description(self):
         return f'{self.description[:20]}...'
     def __str__(self):
-        return f"film name: {self.name} desciption: {self.description[:20]}  data release: {self.date_release}"
+        return f"film name: {self.name} desciption: {self.description[:30]}  data release: {self.date_release}"
 
 
 
@@ -129,10 +134,4 @@ class FilmCinema(models.Model):
         return f"name: {self.film.name} cinema: {self.cinema.brand}"
 
 
-class Rate(models.Model):
-    film = models.ForeignKey(Film, on_delete=models.CASCADE)
-    user = models.ForeignKey(CinemaUser, on_delete=models.SET_NULL, null=True)
-    value = models.SmallIntegerField()
 
-    class Meta:
-        unique_together = ('film', 'user')

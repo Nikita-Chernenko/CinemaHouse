@@ -1,0 +1,127 @@
+{% extends 'general/general.html' %}
+
+{% block content %}
+    {% load static %}
+    <style>
+
+
+        .seat {
+            display: inline-block;
+            margin: 3px;
+            border-radius: 5px;
+            height: 25px;
+            width: 25px;
+        }
+
+        .free_seat {
+
+            background-color: cornflowerblue;
+        }
+
+        .booked_seat {
+
+            background-color: grey;
+        }
+
+        .free_seat:hover {
+            background-color: red;
+        }
+
+    </style>
+
+    <h1 class="text-center">"{{ film_name }}" on {{ datetime|date:'d M' }} at {{ datetime|date:'H:i' }}</h1>
+    <div style="display: flex; align-items: center; justify-content: center">
+        <p>
+        <div class="seat" style="background-color: grey"></div>
+        - Занятое место </p>
+        <p style="padding-left: 50px">
+        <div class="seat" style="background-color: cornflowerblue; padding-right: 10px"></div>
+        - Свободное место </p>
+        <p style="padding-left: 50px">
+        <div class="seat" style="background-color: darkred; padding-right: 10px"></div>
+        - Выбранное место </p>
+    </div>
+    <div class="col-xs-8 center-block">
+        <div style="width: 100%; margin: 0 auto"><img src="{% static 'reservation/images/screen.png' %}" width="100%"
+                                                      style="padding-bottom: 5%"></div>
+        {% for row in seats_in_rows %}
+            <div style="display: flex; justify-content: center;align-items: center">
+                <div style="display:inline-block">Ряд {{ row.0.seat.row }}</div>
+                {% for seat in row %}
+                    <div class=" text-center seat {% if seat.booked %} booked_seat {% else %} free_seat {% endif %}"
+                         onclick="choose(this)" data-toggle="tooltip"
+                         title="Ряд {{ seat.seat.row }} Место {{ seat.seat.seat }} Цена {{ seat.ticket.price }}"
+                         seat_id={{ seat.id }} row={{ seat.seat.row }}
+                         seat={{ seat.seat.seat }} price={{ seat.ticket.price }}>
+                        <p>{{ seat.seat.seat }}</p>
+                    </div>
+                {% endfor %}
+
+            </div>
+        {% endfor %}
+    </div>
+    <div class="col-xs-4" id='chosen_seats'>
+        <p> Yoy have chosen:</p>
+        <p id="total_price" class="alert-warning" style="width: 50%"></p>
+        <button id='btn_choose_seat' class="btn btn-success" onclick="sent_seats()" disabled>Забронировать</button>
+    </div>
+
+
+    <script>
+        $(function () {
+            $("[data-toggle='tooltip']").tooltip();
+        });
+
+        function choose(el) {
+            el = $(el);
+            seat_id = el.attr('seat_id');
+
+            p = ($('p[seat_id=' + seat_id + ']'));
+            if (p.length) {
+                p.remove();
+                el.css({'background-color': "cornflowerblue"})
+            }
+            else if (el.css('background-color') !== "rgb(128, 128, 128)") {
+                el.css({"background-color": "darkred"});
+                console.log($('#chosen_seats').children.length);
+                $("<p class = 'alert-info chosen_seat' style='width:50%' seat_id=" + el.attr('seat_id') + " price=" +
+                    el.attr('price') + ">" + "Ряд " + el.attr('row') + " Место " + el.attr('seat') + " Цена " + el.attr('price') + "</p>").insertBefore($('#total_price'))
+
+            }
+            total_price = 0;
+            $('.chosen_seat').each(function () {
+                total_price += parseInt(($(this).attr('price')));
+
+            });
+            t = $('#total_price');
+            if (total_price === 0) {
+                $('#btn_choose_seat').attr('disabled', 'disabled');
+                t.html("");
+            }
+            else {
+                t.html("Total sum is " + total_price);
+                $('#btn_choose_seat').removeAttr('disabled');
+            }
+
+        }
+
+        function sent_seats() {
+            ids = [];
+            ind = 0;
+            try {
+
+                $(".chosen_seat").each(function () {
+                    ids[ind] = parseInt($(this).attr('seat_id'));
+                    ind++;
+                });
+
+            }
+            catch (err) {
+                alert(err);
+                return false;
+            }
+            window.location.href = '/reservation/continue_reservation/' + ids + '/' + "{{ session_id}}";
+
+        }
+    </script>
+{% endblock %}

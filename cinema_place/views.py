@@ -1,9 +1,11 @@
 from datetime import datetime, timedelta
 
 from cities_light.models import City, Country
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.gis.geoip2 import GeoIP2
 from django.contrib.gis.geos import Point
 from django.core.serializers import json
+from annoying.functions import get_object_or_None
 from django.db.models import Q
 from django.http import HttpResponse, Http404, JsonResponse
 
@@ -11,6 +13,8 @@ from django.shortcuts import render, render_to_response
 from django.template.loader import render_to_string
 
 from cinema_place.models import Cinema, Film, FilmCinema, Genre
+from rate.models import Rate
+from rate.views import get_recommendations
 from reservation.models import Session
 
 
@@ -59,8 +63,12 @@ def main(request):
     client_ip = '178.165.21.85'
     city = geo.city(client_ip)
     city = City.objects.get(area__country__name=city['country_name'], name=city['city'])
+    recommedations = get_recommendations(request)
     films = Film.objects.all()
-    return render(request, 'cinema_place/main_films.html', {'films': films})
+    if 'films_ids' in recommedations:
+        films = films.exclude(pk__in=recommedations['films_ids'])
+
+    return render(request, 'cinema_place/main_films.html', {'films': films,'recommendations':recommedations})
 
 
 def get_cinemas_with_sessions_by_film(request, film_slug):
@@ -97,19 +105,20 @@ def _get_request_city(request):
 
 def films(request):
     if request.method == 'POST':
-        name = request.POST['name'].capitalize()
+        name = request.POST['name']
         age_from = request.POST['age_from']
         age_to = request.POST['age_to']
         genres = request.POST.getlist('genres[]')
+        print(genres)
         films = Film.objects.all()
         if name:
-            films = films.filter(name__contains=name)
+            films = films.filter(Q(name__contains=name)|Q(name__contains=name.capitalize()))
         if age_from:
             films = films.filter(age__gte=age_from)
         if age_to:
             films = films.filter(age__lte=age_to)
         if genres:
-            films = films.filter(genres__in=genres)
+            films = films.filter(genres__in=genres).distinct()
         return render_to_response('cinema_place/film_thumbnail.html', {'films': films})
     else:
         genres = Genre.objects.all().values_list('id', 'name')
@@ -118,7 +127,10 @@ def films(request):
 
 def film_detail(request, film_slug):
     film = Film.objects.get(slug=film_slug)
-    return render(request, 'cinema_place/film_detail.html', {'film': film})
+    rated_by_user = None
+    if request.user.is_authenticated():
+        rated_by_user = get_object_or_None(Rate,film=film,user=request.user)
+    return render(request, 'cinema_place/film_detail.html', {'film': film,'rated_by_user':rated_by_user})
 
 
 def cinemas(request):
@@ -154,3 +166,4 @@ def cinema_detail(request, cinema_slug):
     date_end = (datetime.now().date() + timedelta(days=14)).strftime("%Y-%m-%d")
     return render(request, 'cinema_place/cinema_detail.html',
                   {'cinema': cinema, 'filmnames': filmnames, 'date_start': date_start, 'date_end': date_end})
+
