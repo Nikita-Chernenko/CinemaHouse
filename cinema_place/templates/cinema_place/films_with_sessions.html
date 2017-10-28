@@ -1,14 +1,18 @@
 {% if films_with_sessions %}
     {% for film, sessions in films_with_sessions.items %}
-        <div class="col-md-3 col-6 thumbnail">
-            <img src="{{ film.horizontal_image_url }}" class="img-responsive" style="max-height:300px">
-            <div class="caption center-block text-center" style="float: none">
-                <h3 style="text-align: center; margin-top: 1px;">{{ cinema.name }}</h3>
-                <div class="col-md-8 center-block" style="float:none;">
+        <div class="col-md-3 col-lg-2 col-6 card" style="margin-bottom: 10px">
+            <img class="card-img-top" src="{{ film.horizontal_image_url }}">
+            <div class="card-body">
+                <h3 class="card-title align-self-center ">{{ film.name }}</h3>
+                <p class="card-text"><h4> {{ film.description|default:""|truncatechars:"50" }} </h4> </p>
+                <div>
                     <h3>Сеансы:</h3>
                     {% for session in sessions %}
-                        <a href="{% url 'get-reservation-by-session-id' session_id=session.id %}" class="btn btn-primary"
-                                             role="button"><h4 align="center" style="margin-bottom: 0px;margin-top: 0px">{{ session.datetime.time|time:"H:i" }}</h4></a>
+                        <a href="{% url 'get-reservation-by-session-id' session_id=session.id %}"
+                           class="btn btn-primary"
+                           role="button"><h4 align="center"
+                                             style="margin-bottom: 0px;margin-top: 0px">{{ session.datetime_start.time|time:"H:i" }}</h4>
+                        </a>
                     {% endfor %}
                 </div>
             </div>

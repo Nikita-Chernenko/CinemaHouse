@@ -386,7 +386,7 @@
 			list: '<ul class="pagination"></ul>',
 			listItem: '<li></li>',
 			navItem: '<a href="#" class="dp-nav"></a>',
-			dateItem: '<a href="#" class="dp-item"></a>',
+			dateItem: '<div href="#" class="dp-item"></div>',
 			icon: '<i class="glyphicon"></i>',
 			calendar: '<i id="dp-calendar" class="glyphicon glyphicon-calendar"></i>'
 		},

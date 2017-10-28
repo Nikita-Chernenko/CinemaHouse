@@ -64,7 +64,7 @@ class ReservationSeat(models.Model):
 
 class Ticket(models.Model):
     reservation_seat = models.OneToOneField(ReservationSeat, on_delete=models.CASCADE)
-    bar = models.ImageField(upload_to='bar_codes', unique=True, null=True)
+    bar = models.ImageField(upload_to='bar_codes', null=True)
 
     @property
     def price(self):
