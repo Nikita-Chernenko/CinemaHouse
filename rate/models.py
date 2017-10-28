@@ -12,4 +12,6 @@ class Rate(models.Model):
     objects = RateManager()
     class Meta:
         unique_together = ('film', 'user')
+    def __str__(self):
+        return f'{self.film}:{self.value}'
 

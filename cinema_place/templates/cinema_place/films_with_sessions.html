@@ -1,6 +1,6 @@
 {% if films_with_sessions %}
     {% for film, sessions in films_with_sessions.items %}
-        <div class="col-md-3 col-xs-6 thumbnail">
+        <div class="col-md-3 col-6 thumbnail">
             <img src="{{ film.horizontal_image_url }}" class="img-responsive" style="max-height:300px">
             <div class="caption center-block text-center" style="float: none">
                 <h3 style="text-align: center; margin-top: 1px;">{{ cinema.name }}</h3>
@@ -15,7 +15,7 @@
         </div>
     {% endfor %}
 {% else %}
-    <div class="col-xs-12 text-center">
+    <div class="col-12 text-center">
         <h1 class="alert-warning">Нет сеансов подходящих под условие поиска</h1>
     </div>
 {% endif %}

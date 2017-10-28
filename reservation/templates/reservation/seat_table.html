@@ -41,31 +41,34 @@
         <div class="seat" style="background-color: darkred; padding-right: 10px"></div>
         - Выбранное место </p>
     </div>
-    <div class="col-xs-8 center-block">
-        <div style="width: 100%; margin: 0 auto"><img src="{% static 'reservation/images/screen.png' %}" width="100%"
-                                                      style="padding-bottom: 5%"></div>
-        {% for row in seats_in_rows %}
-            <div style="display: flex; justify-content: center;align-items: center">
-                <div style="display:inline-block">Ряд {{ row.0.seat.row }}</div>
-                {% for seat in row %}
-                    <div class=" text-center seat {% if seat.booked %} booked_seat {% else %} free_seat {% endif %}"
-                         onclick="choose(this)" data-toggle="tooltip"
-                         title="Ряд {{ seat.seat.row }} Место {{ seat.seat.seat }} Цена {{ seat.ticket.price }}"
-                         seat_id={{ seat.id }} row={{ seat.seat.row }}
-                         seat={{ seat.seat.seat }} price={{ seat.ticket.price }}>
-                        <p>{{ seat.seat.seat }}</p>
-                    </div>
-                {% endfor %}
+    <div class="row">
 
-            </div>
-        {% endfor %}
-    </div>
-    <div class="col-xs-4" id='chosen_seats'>
-        <p> Yoy have chosen:</p>
-        <p id="total_price" class="alert-warning" style="width: 50%"></p>
-        <button id='btn_choose_seat' class="btn btn-success" onclick="sent_seats()" disabled>Забронировать</button>
-    </div>
+        <div class="col-8 center-block">
+            <div style="width: 100%; margin: 0 auto"><img src="{% static 'reservation/images/screen.png' %}"
+                                                          width="100%"
+                                                          style="padding-bottom: 5%"></div>
+            {% for row in seats_in_rows %}
+                <div style="display: flex; justify-content: center;align-items: center">
+                    <div style="display:inline-block">Ряд {{ row.0.row }}</div>
+                    {% for seat in row %}
+                        <div class=" text-center seat {% if seat.booked %} booked_seat {% else %} free_seat {% endif %}"
+                             onclick="choose(this)" data-toggle="tooltip"
+                             title="Ряд {{ seat.row }} Место {{ seat.seat }} Цена {{ seat.price }}"
+                             seat_id={{ seat.id }} row={{ seat.row }}
+                             seat={{ seat.seat }} price={{ seat.price }}>
+                            <p>{{ seat.seat }}</p>
+                        </div>
+                    {% endfor %}
 
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col-4" id='chosen_seats'>
+            <p> Yoy have chosen:</p>
+            <p id="total_price" class="alert-warning" style="width: 50%"></p>
+            <button id='btn_choose_seat' class="btn btn-success" onclick="sent_seats()" disabled>Забронировать</button>
+        </div>
+    </div>
 
     <script>
         $(function () {

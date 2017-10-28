@@ -3,18 +3,28 @@
 {% block content %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'cinema_place/css/rating.min.css' %}">
+    <div class="row">
+        {% for film in films %}
+            <div class="col-md-4 col-lg-3 col-6 card" style="margin-bottom: 10px">
+                <img class="card-img-top" src="{{ film.horizontal_image_url }}">
+                <div class="card-body" id= {{ film.id }}>
+                    <h3 class="card-title text-center">{{ film.name }}</h3>
+                    <div>
+                        <h4>
+                            <p>{{ film.description|default:""|truncatechars:"200" }}</p>
+                            <p>Дата выпуска: {{ film.date_release }}</p>
+                        </h4>
+                    </div>
+                    <div class="rating col-12"
+                         style="display: flex; flex-direction: row; justify-content: center"></div>
+                    <button class="center-block btn btn-success btn-block" onclick="rate(this)">Оценить
+                    </button>
 
-    {% for film in films %}
-        <div id="{{ film.id }}" class="thumbnail col-md-4 col-xs-6">
-            <img class="img-thumbnail" src="{{ film.horizontal_image_url }}">
-            <div class="caption">{{ film.name }}</div>
-            <div class="rating col-xs-12"
-                 style="display: flex; flex-direction: row; justify-content: center"></div>
-            <button class="center-block"  onclick="rate(this)">Оценить
-            </button>
+                </div>
 
-        </div>
-    {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
     <script src="{% static 'cinema_place/js/rating.min.js' %}"></script>
     <script>
         var els = $('.rating');
@@ -38,26 +48,27 @@
             rating = ratings[id];
             rating = rating.getRating();
             var csrftoken = getCookie('csrftoken');
-            $.ajaxSetup({
-                beforeSend: function (xhr, settings) {
-                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            if (rating > 0) {
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
                     }
-                }
-            });
-            $.ajax({
-                type: "POST",
-                data: {rate: rating, film_id: id},
-                url: '{% url "rate-film" %}',
-                error: function (error) {
-                    console.log('Произошла ошибка ' + error)
-                },
-                success: function (data) {
-                    $("#rate").html("Рейтинг фильма " + data);
-                    $('#button_rate').html('Переоценить');
-                }
+                });
+                $.ajax({
+                    type: "POST",
+                    data: {rate: rating, film_id: id},
+                    url: '{% url "rate-film" %}',
+                    error: function (error) {
+                        console.log('Произошла ошибка ' + error)
+                    },
+                    success: function (data) {
+                        $('#' + id).parent().remove()
+                    }
 
-            });
+                });
+            }
 
         }
     </script>

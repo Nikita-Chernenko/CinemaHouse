@@ -69,6 +69,7 @@ TEMPLATES = [
         ,
         'APP_DIRS': True,
         'OPTIONS': {
+            'string_if_invalid': 'INVALID EXPRESSION: %s',
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -134,16 +135,15 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = '/map_static/'
 
-
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 AUTH_USER_MODEL = 'general.CinemaUser'
 
-#Coordinates etc
+# Coordinates etc
 GEOIP_PATH = 'Geo2'
 
-#Showing map in admin
+# Showing map in admin
 MAP_WIDGETS = {
     "GooglePointFieldWidget": (
         ("zoom", 15),
@@ -155,16 +155,14 @@ MAP_WIDGETS = {
     "GOOGLE_MAP_API_KEY": "AIzaSyAWfY6rV9iqCZcL2gxPpsUddpYIHkQbxbk"
 }
 
-#Cities adn Countries in admin
+# Cities adn Countries in admin
 CITIES_LIGHT_TRANSLATION_LANGUAGES = ['ru', 'en', 'ua', 'bl', 'pl']
 CITIES_LIGHT_INCLUDE_COUNTRIES = ['UA', 'RU', 'BY', 'PL']
 CITIES_LIGHT_INCLUDE_CITY_TYPES = ['PPL', 'PPLA', 'PPLA2', 'PPLA3', 'PPLA4', 'PPLC', 'PPLF', 'PPLG', 'PPLL', 'PPLR',
                                    'PPLS', 'STLMT', ]
 
-#email activation term
+# email activation term
 ACCOUNT_ACTIVATION_DAYS = 7
-
-
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -173,9 +171,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'marakaci1996@gmail.com'
 EMAIL_HOST_PASSWORD = 'Nikita12'
 
-
-
-#comments
+# comments
 SITE_ID = 1
 
 COMMENTS_APP = 'django_comments_xtd'

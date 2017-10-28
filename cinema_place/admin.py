@@ -1,11 +1,11 @@
 from django.contrib import admin
-from cinema_place.models import Cinema, Area, Film, FilmCinema, Brand,  Genre, Actror,Producer
+from cinema_place.models import Cinema, Area, Film, FilmCinema, Brand,  Genre, Actor, Director
 from django.contrib.gis import admin as geoadmin
 from django.contrib.gis.db import models
 from mapwidgets.widgets import GooglePointFieldWidget
 
-@admin.register(Cinema, Area,  FilmCinema)
-class CinemaMapAdmin(admin.ModelAdmin):
+@admin.register(Area)
+class AreaAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.PointField: {"widget": GooglePointFieldWidget}
     }
@@ -14,7 +14,7 @@ class CinemaMapAdmin(admin.ModelAdmin):
 class RateAdmin(admin.ModelAdmin):
     readonly_fields = ('rate','slug')
 
-@admin.register(Genre,Actror,Producer)
+@admin.register(Genre,Actor,Director,Cinema,FilmCinema)
 class CinemaPlaceAdmin(admin.ModelAdmin):
     pass
 @admin.register(Brand)

@@ -1,10 +1,10 @@
 {% extends 'general/general.html' %}
 
 {% block content %}
-    <div class="search col-xs-12 col-md-12" style="margin-bottom: 1%">
+    <div class="search col-12 col-md-12" style="margin-bottom: 1%">
         {% csrf_token %}
         <div class="row">
-            <div class="form-group search_block col-xs-12 col-md-3">
+            <div class="form-group search_block col-12 col-md-3">
                 <label for="genres_picker">Жанр фильма</label>
                 <select multiple name="genres" id="genres_picker" class="form-control">
                     {% for id, name in genres %}
@@ -12,12 +12,12 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="form-group search_block col-xs-12 col-md-3">
+            <div class="form-group search_block col-12 col-md-3">
                 <label for="name_picker">Название фильма</label>
                 <input type="text" name="name" id="name_picker" class="form-control" placeholder="Название фильма">
 
             </div>
-            <div class="form-group search_block col-xs-12 col-md-3">
+            <div class="form-group search_block col-12 col-md-3">
                 <label for="age_from_picker"> Возрастное ограничение от </label>
                 <select name="age_from" id="age_from_picker" class="form-control">
                     <option value="3" selected>3+</option>
@@ -28,7 +28,7 @@
                     <option value="21">21+</option>
                 </select>
             </div>
-            <div class="form-group search_block col-xs-12 col-md-3">
+            <div class="form-group search_block col-12 col-md-3">
                 <label for="age_to_picker"> Возрастное ограничение</label>
                 <select name="age_to" id="age_to_picker" class="form-control">
                     <option value="3">3+</option>
@@ -40,12 +40,14 @@
                 </select>
             </div>
         </div>
-        <button class="form-group col-xs-6 col-md-3 btn-success btn center center-block" style="float:none"
-                onclick="get_films()">
-            Поиск
-        </button>
+        <div class="row justify-content-center">
+            <button class="form-group col-md-4 btn-success btn  btn-lg" style="float:none"
+                    onclick="get_films()">
+                Поиск
+            </button>
+        </div>
     </div>
-    <div id="films" class="col-xs-12">
+    <div id="films" class="row">
     </div>
 
     {#    <style>#}
@@ -58,7 +60,7 @@
             name = $('#name_picker').val();
             genres = $('#genres_picker').val();
             age_from = $('#age_from_picker').val();
-            age_to =$('#age_to_picker').val();
+            age_to = $('#age_to_picker').val();
             var csrftoken = getCookie('csrftoken');
             $.ajaxSetup({
                 beforeSend: function (xhr, settings) {
@@ -70,7 +72,7 @@
             $.ajax({
                 type: "POST",
                 cache: false,
-                data: {name: name, genres: genres, age_from: age_from, age_to:age_to},
+                data: {name: name, genres: genres, age_from: age_from, age_to: age_to},
                 url: '{% url "films" %}',
                 error: function (error) {
                     {#                    alert("Произошло ошибка:" + error)#}

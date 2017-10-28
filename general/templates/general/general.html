@@ -7,46 +7,49 @@
     <link rel="stylesheet" href="{% static 'general/bootstrap/css/bootstrap.min.css' %}" }>
     <link rel="stylesheet" href="{% static 'cinema_place/css/bootstrap-datepaginator.css' %}" }>
     <script src="{% static 'general/js/jquery.js' %}"></script>
+    <script src="{% static 'general/js/popper.js' %}"></script>
     <script src="{% static 'general/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'general/js/csrf.js' %}"></script>
     <script src="{% static 'cinema_place/js/bootstrap-datepicker.js' %}"></script>
     <script src="{% static 'cinema_place/js/momentjs.js' %}"></script>
     <script src="{% static 'cinema_place/js/bootstrap-datepaginator.js' %}"></script>
-    <nav class="navbar navbar-default" role="navigation"
-         style="margin-bottom: 1%; background-color: black; color: red ">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                        data-target="#desktop">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
 
-            </div>
-            <div class="collapse navbar-collapse" id="desktop">
-                <h4>
-                    <ul class="nav navbar-nav " style="width: 100%; color: red !important;">
-                        <li style=""><a href="{% url 'main' %}">CinemaHouse</a></li>
-                        <li style=""><a href="{% url 'films' %}">Фильмы</a></li>
-                        <li style=""><a href="{% url 'cinemas' %}">Кинотеатры</a></li>
-                        {% if user.is_authenticated %}
-                            <li style=""><a href="{% url 'rate-page' %}">Оценивание фильмов</a></li>
-                            <li style="float: right"><a href={% url 'logout' %}>Выход {{ user.username }}</a></li>
-                        {% else %}
-                            <li style="float: right"><a href={% url 'login' %}>Вход</a></li>
-                            <li style="float: right"><a href="{% url 'registration_register' %}">Регестрация</a></li>
-                        {% endif %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'main' %}"><h1>CinemaHouse</h1></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-                        {% block menu %}
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link btn-lg" href="{% url 'films' %}">Фильмы</a></li>
+                <li class="nav-item"><a class="nav-link btn-lg" href="{% url 'cinemas' %}">Кинотеатры</a></li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link btn-lg" href="{% url 'rate-page' %}">Оценивание фильмов</a>
+                    </li>
 
-                        {% endblock %}
-                    </ul>
-                </h4>
-            </div>
+                {% endif %}
+                {% block menu %}
+
+                {% endblock %}
+            </ul>
+            <ul class="navbar-nav ml-auto">
+
+                {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link btn-lg" href={% url 'logout' %}>Выход {{ user.username }}</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link btn-lg" href={% url 'login' %}>Вход</a></li>
+                    <li class="nav-item"><a class="nav-link btn-lg"
+                                            href="{% url 'registration_register' %}">Регестрация</a></li>
+                {% endif %}
+
+
+            </ul>
 
         </div>
+
     </nav>
 </head>
 <style>
@@ -67,24 +70,15 @@
         color: black !important;
     }
 
-    ul li a {
-        color: white !important;
-    }
-
-    ul li a:hover {
-        color: cadetblue !important;
-    }
-
     div .border {
         border: 2px solid black;
     }
 </style>
 <body style="background-color: whitesmoke;height: 100%;width: 100%">
-<div class="container"
-     style="height:100%; width: 100%">
+<div class="container-fluid">
     {% block content %}
     {% endblock %}
-    <div class="navbar-fixed-bottom container-fluid">ff</div>
+
 </div>
 
 </body>

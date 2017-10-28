@@ -1,9 +1,9 @@
 {% extends 'general/general.html' %}
 {% block content %}
-    <div class="search col-xs-12 col-md-12" style="margin-bottom: 1%">
+    <div class="search col-12 col-md-12" style="margin-bottom: 1%">
         {% csrf_token %}
         <div class="row">
-            <div class="form-group col-xs-12 col-md-4">
+            <div class="form-group col-12 col-md-4">
                 <label for="country_picker"> Страна</label>
                 <select name="country" id="country_picker" class="form-control" onselect="country_change()">
                     {% for id, name in countries %}
@@ -11,7 +11,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="form-group col-xs-12 col-md-4">
+            <div class="form-group col-12 col-md-4">
                 <div class="form-group">
                     <label for="city_picker">Город</label>
                     <select name="city" id="city_picker" class="form-control">
@@ -22,7 +22,7 @@
                     </select>
                 </div>
             </div>
-            <div class="form-group col-xs-12 col-md-2">
+            <div class="form-group col-12 col-md-2">
                 <label for="cinema_button">Найти</label>
                 <button id='cinema_button' class="form-control btn-success btn"
                         onclick="get_cinemas()">
@@ -31,7 +31,7 @@
             </div>
         </div>
     </div>
-    <div id="cinemas" class="col-xs-12">
+    <div id="cinemas" class="row ">
     </div>
     <script>
         function country_change() {

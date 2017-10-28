@@ -3,64 +3,67 @@
     {% load comments %}
     {% load comments_xtd %}
     <div id='main_div' class="row" style="display: flex">
-        <div class="col-md-3 col-xs-12 thumbnail border" id="cinema_image" align="center">
-            <div class="caption">
+        <div class="col-md-3 col-12 card" id="cinema_image" align="center">
+            <div class="card-title">
                 <h2>{{ cinema.brand.name }} {{ cinema.area.city.name }}</h2>
             </div>
-            <img class="img-responsive" src="{{ cinema.brand.image_url }}">
-            <div class="caption">
+            <img class="card-img" src="{{ cinema.brand.image_url }}">
+            <div class="card-body">
                 <h3>Адрес: Родниковая 9 кв 210</h3>
                 <h3>Телефон: 880-0355-35-35</h3>
+                <a class="btn btn-lg btn-primary" href="{% url 'timetable' cinema_slug=cinema.slug %}">Расписание на сегодня</a>
+
             </div>
         </div>
-        <div class="col-md-3 col-xs-12 text-center border" id="films" style="margin-bottom: 20px">
+        <div class="col-md-3 col-12 text-center border" id="films" style="margin-bottom: 20px">
             <h2>Фильмы прокате:</h2>
-            {% for filmname in filmnames %}
-                <div class="center-block text-center" style="clear: both;float:none;">
-                    <p>
-                    <h3>{{ filmname }}</h3></p>
-                </div>
-            {% endfor %}
+            <div class="center-block text-center" style="clear: both;float:none;">
+                <p> {% for filmname in filmnames %}
+                    {{ filmname }},
+                {% endfor %}</p>
+            </div>
+
 
         </div>
-        {#        <div class="col-md-5 col-xs-12 video-container" id="map">#}
+        {#        <div class="col-md-5 col-12 video-container" id="map">#}
         {#            <iframe src="https://www.youtube.com/embed/L4gJRP8nVLY" height=""#}
         {#                    width="100%"#}
         {#                    allowfullscreen="" frameborder="0"></iframe>#}
         {#        </div>#}
-        <div id='map' class="col-md-6 col-xs-12 center-block border thumbnail" style="min-height: 250px">
+        <div id='map' class="col-md-6 col-12 center-block border thumbnail" style="min-height: 250px">
 
         </div>
     </div>
-        <div id="search">
-            <div class="row">
-                <h2><p class="text-center">Сеансы</p></h2>
-                <div class="col-xs-12 col-md-8 center-block" style="float: none" id="date_paginator" class="border"></div>
-                <div class="row" id="films_sessions">
-                </div>
-            </div>
-        </div>
+    <div id="search">
         <div class="row">
-            <div class="col-md-8 col-xs-12 center-block" style="float:none;color: black !important;">
-                {% get_comment_count for cinema as comment_count %}
-
-
-                {% if cinema.allow_comments %}
-                    <div class="comment">
-                        <div class="well">
-                            {% render_comment_form for cinema %}
-                        </div>
-                    </div>
-                {% endif %}
-
-                {% if comment_count %}
-                    <hr/>
-                    <ul class="media-list">
-                        {% render_xtdcomment_tree for cinema %}
-                    </ul>
-                {% endif %}
+            <h2><p class="text-center">Сеансы</p></h2>
+            <div id="date_paginator" style="width: 1000px"></div>
+            <div class="row" id="films_sessions">
             </div>
         </div>
+    </div>
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-8 col-12 justify-content-center align-items-center"
+             style="float:none;color: black !important;">
+            {% get_comment_count for cinema as comment_count %}
+
+
+            {% if cinema.allow_comments %}
+                <div class="comment">
+                    <div class="well">
+                        {% render_comment_form for cinema %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if comment_count %}
+                <hr/>
+                <ul class="media-list">
+                    {% render_xtdcomment_tree for cinema %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
     <style>
         .col {
             flex: 1; /* additionally, equal width */
@@ -70,6 +73,8 @@
         }
     </style>
     <script>
+        $('.hidden').addClass('d-none');
+
         function get_sessions_by_data(event, date) {
             if (typeof date !== "string") {
                 date = date.format("YYYY-MM-DD");
@@ -107,23 +112,14 @@
         function initMap() {
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 14,
-                center: {lat: {{ cinema.geom.y }}, lng: {{cinema.geom.x}}}
+                center: {lat: {{ cinema.area.geom.y }}, lng: {{cinema.area.geom.x}}}
             });
             var marker = new google.maps.Marker({
-                position: {lat: {{ cinema.geom.y }}, lng: {{cinema.geom.x}}},
+                position: {lat: {{ cinema.area.geom.y }}, lng: {{cinema.area.geom.x}}},
                 map: map
             });
         }
 
-        get_sessions_by_data(null, "{{ date_start }}")
-        $(window).resize(function () {
-            if ($(window).width() < 768) {
-                $('#main_div').css('flex-direction', 'column')
-            }
-            if ($(window).width() > 768) {
-                $('#main_div').css('flex-direction', 'row')
-            }
-        })
     </script>
     <script async defer
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWfY6rV9iqCZcL2gxPpsUddpYIHkQbxbk&callback=initMap">

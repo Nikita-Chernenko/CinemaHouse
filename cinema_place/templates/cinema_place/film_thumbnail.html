@@ -1,19 +1,23 @@
 {% if films %}
-{% for film in films %}
-    <div class="col-md-3 film thumbnail">
-        <img src="{{ film.horizontal_image_url }}" class="img-responsive" style="max-height:300px">
-        <div class="caption">
-            <h3 style="text-align: center; margin-top: 1px;">{{ film.name }}</h3>
-            <p><h4> {{ film.short_description }} </h4> </p>
-            <p align="center"><a href="{% url 'search-cinemas-with-sessions' film_slug=film.slug %}" class="btn btn-primary"
-                                 role="button">Кинотеатры</a> <a href="{% url 'film-detail' film_slug=film.slug %}"
-                                                                 class="btn btn-default"
-                                                                 role="button">Подробнее</a></p>
+    {% for film in films %}
+        <div class="col-md-3 col-lg-2 col-6 card" style="margin-bottom: 10px">
+            <img class="card-img-top" src="{{ film.horizontal_image_url }}">
+            <div class="card-body">
+                <h3 class="card-title align-self-center ">{{ film.name }}</h3>
+                <p class="card-text"><h4> {{ film.description|default:""|truncatechars:"50" }} </h4> </p>
+                <div>
+                    <a class="btn btn-primary"
+                       href="{% url 'search-cinemas-with-sessions' film_slug=film.slug %}"
+                       role="button">Кинотеатры</a>
+                    <a href="{% url 'film-detail' film_slug=film.slug %}"
+                       class="btn btn-default"
+                       role="button">Подробнее</a>
+                </div>
+            </div>
         </div>
-    </div>
-{% endfor %}
-{% else%}
-    <div class="col-xs-12 text-center">
-    <h1 class="alert-warning">Нет фильмов подходящих под условие поиска</h1>
+    {% endfor %}
+{% else %}
+    <div class="col-12 text-center">
+        <h1 class="alert-warning">Нет фильмов подходящих под условие поиска</h1>
     </div>
 {% endif %}
