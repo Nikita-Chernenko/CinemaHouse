@@ -54,46 +54,29 @@ class SessionSeatTypePrice(models.Model):
         unique_together = ['session', 'seat_type']
 
 
-class ReservationSeat(models.Model):
-    seat = models.ForeignKey(Seat, on_delete=models.CASCADE)
-    session = models.ForeignKey(Session, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.seat}'
-
-
 class Ticket(models.Model):
-    reservation_seat = models.OneToOneField(ReservationSeat, on_delete=models.CASCADE)
-    bar = models.ImageField(upload_to='bar_codes', null=True)
-
-    @property
-    def price(self):
-        seat_type = self.reservation_seat.seat.type.type
-        print(seat_type)
-        return self.reservation_seat.session.sessionseattypeprice_set.get(seat_type__type=seat_type).price
-
-    def __str__(self):
-        return f'{self.reservation_seat}'
-
-
-class Reservation(models.Model):
     name = models.CharField(max_length=20, null=True)
     surname = models.CharField(max_length=20, null=True)
     email = models.EmailField(null=True)
-    tickets = models.ManyToManyField(Ticket)
 
     @property
     def summary(self):
-        return self.tickets.all().aggregate(sum('price'))
+        return self.reservationseat_set.all().aggregate(sum('price'))
 
     def __str__(self):
-        return f'{self.name} {self.surname} {self.tickets.all()}'
+        return f'{self.name} {self.surname} '
 
 
-@receiver(post_save, sender=Reservation)
-def reservation_post_save(sender, instance, created, **kwargs):
-    if instance.tickets:
-        for ticket in instance.tickets.all():
-            ticket.reservation_seat.booked = True
-            ticket.reservation_seat.save()
-            ticket.save()
+class ReservationSeat(models.Model):
+    seat = models.ForeignKey(Seat, on_delete=models.CASCADE)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE)
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
+
+    @property
+    def price(self):
+        seat_type = self.seat.type.type
+        print(seat_type)
+        return self.session.sessionseattypeprice_set.get(seat_type__type=seat_type).price
+
+    def __str__(self):
+        return f'{self.seat}'

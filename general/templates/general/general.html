@@ -8,13 +8,16 @@
     <link rel="stylesheet" href="{% static 'cinema_place/css/bootstrap-datepaginator.css' %}" }>
     <script src="{% static 'general/js/jquery.js' %}"></script>
     <script src="{% static 'general/js/popper.js' %}"></script>
+    <link rel="stylesheet" href="http://www.atlasestateagents.co.uk/css/tether.min.css">
+    <script src="http://www.atlasestateagents.co.uk/javascript/tether.min.js"></script>
+
     <script src="{% static 'general/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'general/js/csrf.js' %}"></script>
     <script src="{% static 'cinema_place/js/bootstrap-datepicker.js' %}"></script>
     <script src="{% static 'cinema_place/js/momentjs.js' %}"></script>
     <script src="{% static 'cinema_place/js/bootstrap-datepaginator.js' %}"></script>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
         <a class="navbar-brand" href="{% url 'main' %}"><h1>CinemaHouse</h1></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +40,8 @@
             <ul class="navbar-nav ml-auto">
 
                 {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link btn-lg" href={% url 'logout' %}>Выход {{ user.username }}</a>
+                    <li class="nav-item"><a class="nav-link btn-lg"
+                                            href={% url 'logout' %}>Выход {{ user.username }}</a>
                     </li>
                 {% else %}
                     <li class="nav-item"><a class="nav-link btn-lg" href={% url 'login' %}>Вход</a></li>

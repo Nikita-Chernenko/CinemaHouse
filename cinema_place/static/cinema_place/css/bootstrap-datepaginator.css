@@ -55,7 +55,7 @@
 	height: 60px;
 	padding: 13px 0px !important;
 	width: 35px;
-	margin: 0px !important;  				/* Override boostrap .pagination -1px, */
+	margin: 0px !important;  				/* Override bootstrap .pagination -1px, */
 	border-left-style: hidden !important;	/* so we must hide left border instead */
 	text-align: center;
 }

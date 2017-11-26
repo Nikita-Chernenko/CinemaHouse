@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from reservation.forms import ReservationForm
-from reservation.models import Session, Seat, ReservationSeat, Reservation, SessionSeatTypePrice, Ticket
+from reservation.models import Session, Seat, ReservationSeat,  SessionSeatTypePrice, Ticket
 
 
 @render_to('reservation/seat_table.html')
@@ -39,7 +39,6 @@ def continue_reservation(request, reservation_seat_ids, session_id):
     seats = []
     price = 0
     for id in seat_ids:
-
         seat = get_object_or_None(Seat, pk=id)
         r = get_object_or_None(ReservationSeat, session=session, seat=seat)
         if not r:
@@ -60,19 +59,14 @@ def continue_reservation(request, reservation_seat_ids, session_id):
             name = form.cleaned_data['name']
             surname = form.cleaned_data['surname']
             email = form.cleaned_data['email']
+            ticket = Ticket(name=name, surname=surname, email=email)
+            ticket.save()
             for seat in seats:
-                r = ReservationSeat(session=session,seat=seat)
+                r = ReservationSeat(session=session, seat=seat, ticket=ticket)
                 r.save()
-                t = Ticket.objects.create(reservation_seat=r)
-                t.save()
-                tickets.append(t)
-            reservation = Reservation(name=name, surname=surname, email=email)
-            reservation.save()
-            for ticket in tickets:
-                reservation.tickets.add(ticket)
-            reservation.save()
+                tickets.append(r)
             send_mail("Регестрация билета", f'Здравствуйте {name} {surname}.'
-                                            f'Вы заказали билеты в количестве {len(tickets)}. Номер заказа - {reservation.id}'
+                                            f'Вы заказали билеты в количестве {len(tickets)}. Номер заказа - {ticket.id}'
                                             f' на фильм {film_name} который пройдет'
                                             f' {datetime.datetime.strftime(date_time_start,"%m.%d %a %H:%M")} - {datetime.datetime.strftime(date_time_end,"%H:%M")}.'
                                             f'Вы можете оплатить билеты на кассе. '
@@ -82,5 +76,5 @@ def continue_reservation(request, reservation_seat_ids, session_id):
     form = ReservationForm()
     return render(request, 'reservation/reservation.html',
                   {'seats': seats, 'name': film_name, 'datetime': date_time_start, 'price': price,
-                   'form': form, 'hall':session.hall.name,
+                   'form': form, 'hall': session.hall.name,
                    'seat_ids': reservation_seat_ids, 'session_id': session_id})

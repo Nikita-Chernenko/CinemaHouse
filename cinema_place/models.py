@@ -21,6 +21,7 @@ class Area(models.Model):
     city = models.ForeignKey(City)
     geom = gismodels.PointField(default='POINT(49.988358 36.232845)')
     phone = models.CharField(max_length=100, default="099-565-23-22")
+    address = models.CharField(max_length=300)
     objects = gismodels.GeoManager()
 
     def __str__(self):
