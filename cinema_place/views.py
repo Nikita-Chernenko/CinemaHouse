@@ -90,7 +90,7 @@ def get_cinemas_with_sessions_by_film(request, film_slug):
     cinemas = Cinema.objects.filter(filmcinema__film=film).filter(area__city_id=city_id)
     cinemas_with_sessions = []
     for cinema in cinemas:
-        sessions = Session.objects.filter(film_cinema__cinema=cinema)
+        sessions = Session.objects.filter(film_cinema__cinema=cinema, film_cinema__film=film)
         sessions = sessions.filter(datetime_start__contains=date)
         cinemas_with_sessions.append({cinema: sessions})
     countries = Country.objects.all().values_list('id', 'name')
@@ -100,7 +100,7 @@ def get_cinemas_with_sessions_by_film(request, film_slug):
 @render_to('cinema_place/search_cinemas_with_sessions.html')
 def search_cinemas_with_sessions(request, film_slug):
     city = _get_request_city(request)
-    date = str(Session.objects.last().datetime_start.date())
+    date = str(Session.objects.last().datetime_start.date() if Session.objects.last() else datetime.today().date())
     countries = Country.objects.all().values_list('id', 'name')
     cities = City.objects.filter(country=city.country).values_list('id', 'name')
     return {'countries': countries, 'cities': cities, 'country': city.country.name,

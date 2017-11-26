@@ -28,3 +28,7 @@
 .c-rating__item.is-active {
   background-position: -24px 0;
 }
+
+.rating {
+  list-style: none;
+}

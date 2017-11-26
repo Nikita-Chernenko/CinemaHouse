@@ -6,4 +6,5 @@ from general.models import CinemaUser
 class CinemaUserForm(RegistrationForm):
     class Meta:
         model = CinemaUser
-        fields = ["username","email"]
+        fields = ["username", "email"]
+

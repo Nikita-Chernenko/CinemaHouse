@@ -4,26 +4,32 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'cinema_place/css/rating.min.css' %}">
     <div class="row">
-        {% for film in films %}
-            <div class="col-md-4 col-lg-3 col-6 card" style="margin-bottom: 10px">
-                <img class="card-img-top" src="{{ film.horizontal_image_url }}">
-                <div class="card-body" id= {{ film.id }}>
-                    <h3 class="card-title text-center">{{ film.name }}</h3>
-                    <div>
-                        <h4>
-                            <p>{{ film.description|default:""|truncatechars:"200" }}</p>
-                            <p>Дата выпуска: {{ film.date_release }}</p>
-                        </h4>
+        {% if films %}
+            {% for film in films %}
+                <div class="col-md-4 col-lg-2 col-6 card" style="margin-bottom: 10px">
+                    <img class="card-img-top" src="{{ film.horizontal_image_url }}">
+                    <div class="card-body" id= {{ film.id }}>
+                        <h3 class="card-title text-center">{{ film.name }}</h3>
+                        <div>
+                            <h4>
+                                <p>{{ film.description|default:""|truncatechars:"200" }}</p>
+                                <p>Дата выпуска: {{ film.date_release }}</p>
+                            </h4>
+                        </div>
+                        <div class="rating col-12"
+                             style="display: flex; flex-direction: row; justify-content: center"></div>
+                        <button class="center-block btn btn-success btn-block" onclick="rate(this)">Оценить
+                        </button>
+
                     </div>
-                    <div class="rating col-12"
-                         style="display: flex; flex-direction: row; justify-content: center"></div>
-                    <button class="center-block btn btn-success btn-block" onclick="rate(this)">Оценить
-                    </button>
 
                 </div>
-
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center">
+                <h1 class="alert-warning">Вы уже оценили все фильмы!</h1>
             </div>
-        {% endfor %}
+        {% endif %}
     </div>
     <script src="{% static 'cinema_place/js/rating.min.js' %}"></script>
     <script>

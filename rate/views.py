@@ -2,6 +2,7 @@ from random import shuffle
 
 import datetime
 from annoying.functions import get_object_or_None
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -23,7 +24,7 @@ def rate_film(request):
             rate.save()
         return HttpResponse(film.rate)
 
-
+@login_required()
 def rate_page(request):
     time = datetime.datetime.now()
     user = request.user

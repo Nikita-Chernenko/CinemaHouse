@@ -7,7 +7,7 @@ from cinema_place.models import FilmCinema, Cinema
 
 
 class CinemaHall(models.Model):
-    name = models.CharField(max_length=1)
+    name = models.CharField(max_length=10)
     cinema = models.ForeignKey(Cinema, on_delete=models.CASCADE)
 
 
@@ -41,8 +41,16 @@ class Session(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.datetime_end:
-            self.datetime_end = self.datetime_start + datetime.timedelta(minutes=self.film_cinema.film.duration_minutes)
-        super(Session, self).save(*args, **kwargs)  # TODO test it
+            self.datetime_end = self.datetime_start + datetime.timedelta(
+                minutes=self.film_cinema.film.duration_minutes + 15)
+        # sessions = Session.objects.filter(film_cinema=self.film_cinema, hall=self.hall)
+        # start = self.datetime_start
+        # end = self.datetime_end
+        # if any([True for x in sessions if x.datetime_start > start and x.datetime_end < end or
+        #                         x.datetime_start < start and x.datetime_end > start or
+        #                         x.datetime_start < end and x.datetime_end > end]):
+        #     raise ValueError('session in this time exists')
+        super(Session, self).save(*args, **kwargs)
 
 
 class SessionSeatTypePrice(models.Model):

@@ -15,6 +15,14 @@
             {% for film in films|slice:":5" %}
                 <div class="carousel-item {% if forloop.first %} active {% endif %}">
                     <img class="d-block w-50" src="{{ film.big_image_url }}" alt="First slide" style="margin: auto">
+                    <div class="carousel-caption d-none d-md-block">
+                        <a class="btn btn-primary btn-lg"
+                           href="{% url 'search-cinemas-with-sessions' film_slug=film.slug %}"
+                           role="button">Кинотеатры</a>
+                        <a href="{% url 'film-detail' film_slug=film.slug %}"
+                           class="btn btn-default"
+                           role="button">Подробнее</a>
+                    </div>
                 </div>
             {% endfor %}
         </div>
@@ -30,7 +38,7 @@
     {% if user.is_authenticated %}
 
         {% if recommendations.recommendations %}
-            <h1 class="alert-info text-center">Персональная  подборка</h1>
+            <h1 class="alert-info text-center">Персональная подборка</h1>
             <div id="recommedations" class="row">
                 {% include 'cinema_place/film_thumbnail.html' with films=recommendations.recommendations %}
             </div>

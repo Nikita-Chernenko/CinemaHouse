@@ -13,7 +13,7 @@
             <h3><p id="rate"> Ретинг фильма {{ film.rate }}</p></h3>
             {% csrf_token %}
             {% if user.is_authenticated %}
-                <div id="rating" class="col-12"
+                <div id="rating" class="col-12 rating"
                      style="display: flex; flex-direction: row; justify-content: center"></div>
                 <button class="center-block" id='button_rate' onclick="rate()">{% if rated_by_user %}
                     Переоценить{% else %}
@@ -45,7 +45,7 @@
                                  role="button">Сеансы</a></p>
         </div>
         <div class="col-md-4 col-12 video-container" id="film_video">
-            <iframe src="https://www.youtube.com/embed/L4gJRP8nVLY"
+            <iframe src="http:{{ film.video_url|slice:'2:-2' }}"
                     height="100%" width="100%"
                     allowfullscreen="" frameborder="0"></iframe>
         </div>

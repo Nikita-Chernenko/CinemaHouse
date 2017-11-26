@@ -1,5 +1,6 @@
 import datetime
 
+from autoslug import AutoSlugField
 from django.db import models
 from django.contrib.gis.db import models as gismodels
 from cities_light.models import City, Country
@@ -14,7 +15,6 @@ from django.conf import settings
 
 from cinema_place.managers import FilmManager
 from general.models import CinemaUser
-
 
 
 class Area(models.Model):
@@ -32,6 +32,8 @@ class Brand(models.Model):
     name = models.CharField(max_length=50)
     image = models.ImageField(upload_to='cinema_images', unique=True)
 
+    class Meta:
+        ordering = ['name']
 
     def image_url(self):
         return f'/cinema/get_pic/{settings.MEDIA_ROOT}/{self.image}/cinema'
@@ -47,6 +49,9 @@ class Cinema(models.Model):
     area = models.OneToOneField(Area, on_delete=models.CASCADE)
     slug = models.SlugField()
     allow_comments = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['brand']
 
     def __str__(self):
         return f"Company name: {self.brand}  {self.area}  x:{self.area.geom.x} y:{self.area.geom.y}"
@@ -88,7 +93,7 @@ class Film(models.Model):
     date_release = models.DateField()
     description = models.TextField()
     genres = models.ManyToManyField(Genre)
-    slug = models.SlugField()
+    slug = AutoSlugField(populate_from='name', unique=True, db_index=True)
     age = models.SmallIntegerField(default=3)
     cast = models.ManyToManyField(Actor)
     directors = models.ManyToManyField(Director)
@@ -101,6 +106,9 @@ class Film(models.Model):
     duration_minutes = models.PositiveSmallIntegerField(default=120)
 
     objects = FilmManager()
+
+    class Meta:
+        ordering = ['name']
 
     @property
     def vertical_image_url(self):
@@ -130,10 +138,10 @@ class Film(models.Model):
         return f"film name: {self.name} desciption: {self.description[:30]}  data release: {self.date_release}"
 
 
-@receiver(post_save, sender=Film)
-def film_post_save(sender, instance, created, **kwargs):
-    Film.objects.filter(pk=instance.id).update(slug=f'{"_".join(instance.name.split(" "))}_{instance.id}'.lower())
-
+# @receiver(post_save, sender=Film)
+# def film_post_save(sender, instance, created, **kwargs):
+#     Film.objects.filter(pk=instance.id).update(slug=f'{"_".join(instance.name.replace(":","_").split(" "))}_{instance.id}'.lower())
+#
 
 class FilmCinema(models.Model):
     film = models.ForeignKey(Film, on_delete=models.CASCADE)
