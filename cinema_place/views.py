@@ -9,17 +9,18 @@ from django.contrib.gis.geoip2 import GeoIP2
 from django.contrib.gis.geos import Point
 from django.core.serializers import json
 from annoying.functions import get_object_or_None
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http import HttpResponse, Http404, JsonResponse
 
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template.loader import render_to_string
+from functools import reduce
 
 from CinemaHouse import settings
 from cinema_place.models import Cinema, Film, FilmCinema, Genre
 from rate.models import Rate
 from rate.views import get_recommendations
-from reservation.models import Session
+from reservation.models import Session, ReservationSeat
 
 
 def get_client_ip(request):
@@ -128,7 +129,7 @@ def films(request):
             films = films.filter(age__gte=age_from)
         if age_to:
             films = films.filter(age__lte=age_to)
-        if genres:
+        if genres and all(genres):
             films = films.filter(genres__in=genres).distinct()
         return render_to_response('cinema_place/film_thumbnail.html', {'films': films})
     else:
@@ -203,4 +204,24 @@ def cinema_timetable(request, cinema_slug):
     writer = csv.writer(response)
     for film_time in timetable:
         writer.writerow(film_time)
+    return response
+
+
+def cinema_money(request):
+    date_now = datetime.now()
+    cinemas = Cinema.objects.all()
+    cinema_m = {}
+    for cinema in cinemas:
+        rs = ReservationSeat.objects. \
+            filter(session__datetime_end__contains=date_now.month).filter(
+            session__film_cinema__cinema=cinema)
+        rs = [r.price for r in rs]
+        cinema_m[cinema.brand.name + '-' + str(cinema.id)] = reduce(lambda x, y: x + y, rs if rs else [0])
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="cinema-money-{date_now}"'
+    writer = csv.writer(response)
+    writer.writerow(['Кинотеатр','Сумма за месяц'])
+    for key, value in cinema_m.items():
+        writer.writerow([key,str(value)+' грн'])
     return response

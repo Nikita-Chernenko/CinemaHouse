@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django_comments_xtd',
     'django_comments',
+
     'mapwidgets',
     'widget_tweaks',
     'crispy_forms',
     'cities_light',
+
     'general',
     'accounts',
     'cinema_place',
@@ -147,10 +149,9 @@ GEOIP_PATH = 'Geo2'
 MAP_WIDGETS = {
     "GooglePointFieldWidget": (
         ("zoom", 15),
-        ("mapCenterLocationName", "Urkaine"),
-        ("GooglePlaceAutocompleteOpti1ons", {'componentRestrictions': {'country': 'ua'}}),
+        ("mapCenterLocationName", "london"),
+        ("GooglePlaceAutocompleteOptions", {'componentRestrictions': {'country': 'uk'}}),
         ("markerFitZoom", 12),
-        ("mapCenterLocation", [57.7177013, 10.6300491])
     ),
     "GOOGLE_MAP_API_KEY": "AIzaSyAWfY6rV9iqCZcL2gxPpsUddpYIHkQbxbk"
 }

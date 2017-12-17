@@ -5,23 +5,47 @@
     <link rel="stylesheet" href="{% static 'cinema_place/css/rating.min.css' %}">
     <div class="row">
         {% if films %}
+            <style>
+                .film_pic {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-start;
+                    margin-bottom: 10px;
+                    position: relative;
+                    align-items: center;
+                }
+
+                .description {
+                    margin-bottom: 40px;
+                }
+
+                .buttons {
+                    position: absolute;
+                    bottom: 0;
+                }
+
+            </style>
             {% for film in films %}
-                <div class="col-md-4 col-lg-2 col-6 card" style="margin-bottom: 10px">
+                <div class="col-md-4 col-lg-2 col-6 card film_pic" style="min-height: 30vh;">
                     <img class="card-img-top" src="{{ film.horizontal_image_url }}">
-                    <div class="card-body" id= {{ film.id }}>
-                        <h3 class="card-title text-center">{{ film.name }}</h3>
+                    <div class="card-body description" id="{{ film.id }}">
+                        <div class="name">
+                            <h3 class="card-title text-center">{{ film.name }}</h3>
+                        </div>
                         <div>
                             <h4>
                                 <p>{{ film.description|default:""|truncatechars:"200" }}</p>
                                 <p>Дата выпуска: {{ film.date_release }}</p>
                             </h4>
                         </div>
+                    </div>
+                    <div class="buttons" id="{{ film.id }}">
                         <div class="rating col-12"
                              style="display: flex; flex-direction: row; justify-content: center"></div>
-                        <button class="center-block btn btn-success btn-block" onclick="rate(this)">Оценить
+                        <button class="center-block btn btn-success btn-block"  onclick="rate(this)">Оценить
                         </button>
-
                     </div>
+
 
                 </div>
             {% endfor %}

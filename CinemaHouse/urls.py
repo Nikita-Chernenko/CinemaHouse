@@ -19,12 +19,11 @@ from django.contrib import admin
 from cinema_place.views import main
 
 urlpatterns = [
+    url(r'^$', main),
     url(r'^admin/', admin.site.urls),
     url(r'^cinema/', include('cinema_place.urls')),
-    url(r'^accounts/',include('accounts.urls')),
-    url(r'^reservation/',include('reservation.urls')),
-    url(r'^comments/',include('django_comments_xtd.urls')),
-    url(r'^rate/',include('rate.urls')),
-    url(r'^$',main),
+    url(r'^accounts/', include('accounts.urls')),
+    url(r'^reservation/', include('reservation.urls')),
+    url(r'^comments/', include('django_comments_xtd.urls')),
+    url(r'^rate/', include('rate.urls')),
 ]
-

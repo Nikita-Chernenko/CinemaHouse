@@ -2,6 +2,7 @@ import datetime
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from functools import reduce
 
 from cinema_place.models import FilmCinema, Cinema
 
@@ -43,6 +44,7 @@ class Session(models.Model):
         if not self.datetime_end:
             self.datetime_end = self.datetime_start + datetime.timedelta(
                 minutes=self.film_cinema.film.duration_minutes + 15)
+        # self.film_cinema.film.active = True
         # sessions = Session.objects.filter(film_cinema=self.film_cinema, hall=self.hall)
         # start = self.datetime_start
         # end = self.datetime_end
@@ -69,7 +71,9 @@ class Ticket(models.Model):
 
     @property
     def summary(self):
-        return self.reservationseat_set.all().aggregate(sum('price'))
+        rs = self.reservationseat_set.all()
+        rs =  [r.price for r in rs]
+        return reduce(lambda x, y: x + y, rs if rs else [0])
 
     def __str__(self):
         return f'{self.name} {self.surname} '
@@ -83,7 +87,6 @@ class ReservationSeat(models.Model):
     @property
     def price(self):
         seat_type = self.seat.type.type
-        print(seat_type)
         return self.session.sessionseattypeprice_set.get(seat_type__type=seat_type).price
 
     def __str__(self):

@@ -7,8 +7,9 @@
             <div class="form-group search_block col-12 col-md-3">
                 <label for="genres_picker">Жанр фильма</label>
                 <select multiple name="genres" id="genres_picker" class="form-control">
+                    <option value>Любой</option>
                     {% for id, name in genres %}
-                        <option value="{{ id }}">{{ name }}</option>
+                        <option value="{{ id }}">{{ name|capfirst }}</option>
                     {% endfor %}
                 </select>
             </div>

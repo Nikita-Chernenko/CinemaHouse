@@ -65,13 +65,13 @@ def continue_reservation(request, reservation_seat_ids, session_id):
                 r = ReservationSeat(session=session, seat=seat, ticket=ticket)
                 r.save()
                 tickets.append(r)
-            send_mail("Регестрация билета", f'Здравствуйте {name} {surname}.'
-                                            f'Вы заказали билеты в количестве {len(tickets)}. Номер заказа - {ticket.id}'
-                                            f' на фильм {film_name} который пройдет'
-                                            f' {datetime.datetime.strftime(date_time_start,"%m.%d %a %H:%M")} - {datetime.datetime.strftime(date_time_end,"%H:%M")}.'
-                                            f'Вы можете оплатить билеты на кассе. '
-                                            f'Помните, пока вы только забронировали билеты, их нужно выкупить',
-                      'СinemaHouse+', [email], )
+            html =  f'<h2>Здравствуйте {name} {surname}.<h2> ' \
+                       f'<p>Вы заказали билеты в количестве {len(tickets)}.<p><p> Номер заказа - {ticket.id}</p>' \
+                       f'<p>на фильм {film_name}, который пройдет'\
+                        f' <strong<{datetime.datetime.strftime(date_time_start,"%m.%d %a %H:%M")} - {datetime.datetime.strftime(date_time_end,"%H:%M")}.</strong></p>'\
+                        f'<p>Вы можете оплатить билеты на кассе. </p>'\
+                        f'<p>Помните, пока вы только забронировали билеты, их нужно выкупить</p>'
+            send_mail(message='',from_email='СinemaHouse+',subject='Бронирование билетов', recipient_list=[email],html_message=html)
             return redirect(reverse('main'))
     form = ReservationForm()
     return render(request, 'reservation/reservation.html',

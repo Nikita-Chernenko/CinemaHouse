@@ -1,18 +1,33 @@
 {% if films %}
+    <style>
+        .film_pic{
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .description {
+            margin-bottom: 40px;
+        }
+
+        .buttons {
+            position: absolute;
+            bottom: 0;
+        }
+    </style>
     {% for film in films %}
-        <div class="col-md-3 col-lg-2 col-6 card" style="margin-bottom: 10px">
+        <div class="col-md-3 col-lg-2 col-6 card film_pic" style="margin-bottom: 10px">
             <img class="card-img-top" src="{{ film.horizontal_image_url }}">
-            <div class="card-body">
-                <h3 class="card-title align-self-center ">{{ film.name }}</h3>
+            <div class="card-body description">
+                <h3 class="card-title" style="text-align: center">{{ film.name }}</h3>
                 <p class="card-text"><h4> {{ film.description|default:""|truncatechars:"50" }} </h4> </p>
-                <div>
-                    <a class="btn btn-primary"
-                       href="{% url 'search-cinemas-with-sessions' film_slug=film.slug %}"
-                       role="button">Кинотеатры</a>
-                    <a href="{% url 'film-detail' film_slug=film.slug %}"
-                       class="btn btn-default"
-                       role="button">Подробнее</a>
-                </div>
+            </div>
+            <div class="buttons buttons">
+                <a class="btn btn-primary"
+                   href="{% url 'search-cinemas-with-sessions' film_slug=film.slug %}"
+                   role="button">Кинотеатры</a>
+                <a href="{% url 'film-detail' film_slug=film.slug %}"
+                   class="btn btn-default"
+                   role="button">Подробнее</a>
             </div>
         </div>
     {% endfor %}

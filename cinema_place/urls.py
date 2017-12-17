@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^cinema_detail/(?P<cinema_slug>[\w\!\_\:\-0-9]+)',views.cinema_detail, name='cinema-detail'),
     url(r'^timetable/(?P<cinema_slug>[\w\!\_\:\-0-9]+)$',views.cinema_timetable,name='timetable'),
     url(r'^main$',views.main,name='main'),
+    url(r'^cinema-money$',view=views.cinema_money, name='cinema-money')
 ]

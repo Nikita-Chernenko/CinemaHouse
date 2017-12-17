@@ -22,6 +22,7 @@ class Command(BaseCommand):
         SessionSeatTypePrice.objects.all().delete()
         films = Film.objects.all()
         cinemas = Cinema.objects.all()
+        FilmCinema.objects.update(end_screening = date.today() + dt.timedelta(days=14))
         for film in films:
             for cinema in cinemas:
                 film_cinema = get_object_or_None(FilmCinema, cinema=cinema, film=film)
