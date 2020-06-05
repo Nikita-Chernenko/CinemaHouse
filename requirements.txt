@@ -8,7 +8,7 @@ confusable-homoglyphs==2.0.2
 constantly==15.1.0
 cryptography==2.1.3
 cssselect==1.0.1
-Django==1.11.7
+Django==1.11.29
 django-annoying==0.10.3
 django-autoslug==1.9.3
 django-cities-light==3.3.0
