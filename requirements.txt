@@ -16,7 +16,7 @@ django-comments-xtd==2.0.9
 django-contrib-comments==1.8.0
 django-crispy-forms==1.7.0
 django-map-widgets==0.1.9
-django-registration==2.3
+django-registration==3.1.2
 django-widget-tweaks==1.4.1
 djangorestframework==3.6.4
 docutils==0.14
